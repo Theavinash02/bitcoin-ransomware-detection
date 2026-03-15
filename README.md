@@ -79,5 +79,5 @@ joblib
 
 ## Note
 
-This is v1 of the project — the original final year submission.  
+This is v1 of the project - the original final year submission.  
 A research-grade v2 is in progress, adding XGBoost comparison, SHAP explainability, and a Bayesian Network model using [pgmpy](https://github.com/pgmpy/pgmpy).
