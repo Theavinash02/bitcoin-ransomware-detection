@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChainGuard — Bitcoin Ransomware Detection</title>
+  <title>ChainGuard - Bitcoin Ransomware Detection</title>
   <meta name="description" content="A machine learning system that detects Bitcoin ransomware activity by classifying addresses using transaction graph features. Final Year Project by Avinash P, Anna University 2024.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -681,7 +681,7 @@
   <nav class="nav">
     <div class="nav-logo">
       <div class="nav-icon">₿</div>
-      <span class="nav-wordmark">ChainGuard</span>
+      <span class="nav-wordmark">Bitcoin Ransomware Detection</span>
     </div>
     <div class="nav-links">
       <a class="nav-link" href="#about">About</a>
@@ -704,7 +704,7 @@
       </h1>
       <p class="hero-desc">
         A Random Forest classifier that analyses Bitcoin transaction graph features
-        to identify addresses linked to 29 known ransomware families —
+        to identify addresses linked to 29 known ransomware families -
         trained on the UCI BitcoinHeist dataset.
       </p>
       <div class="hero-actions">
@@ -741,7 +741,7 @@
           <h2 class="section-title">Classifying ransomware activity on the Bitcoin network</h2>
           <p>
             Ransomware operators use Bitcoin to collect payments anonymously. By the time a victim pays,
-            the address has already left a <strong>distinctive fingerprint</strong> in the transaction graph —
+            the address has already left a <strong>distinctive fingerprint</strong> in the transaction graph -
             patterns in how coins flow, loop, and accumulate.
           </p>
           <p>
@@ -817,7 +817,7 @@
     <div class="container">
       <div class="section-header reveal">
         <div class="section-eyebrow">// Dataset & features</div>
-        <h2 class="section-title">BitcoinHeist — UCI ML Repository</h2>
+        <h2 class="section-title">BitcoinHeist - UCI ML Repository</h2>
         <p class="section-desc">
           A dataset of Bitcoin addresses with labelled ransomware families,
           originally published by Farrukhjon Masudov et al.
@@ -943,7 +943,7 @@
       <div class="disclaimer reveal" style="transition-delay:.2s">
         <span>⚠</span>
         <span>
-          The high accuracy is influenced by class imbalance — the majority of addresses are benign (white).
+          The high accuracy is influenced by class imbalance - the majority of addresses are benign (white).
           The v2 upgrade will address this with SMOTE oversampling and per-class weighted metrics.
           See the <a href="https://github.com/theavinash02/bitcoin-ransomware-detection" style="color:var(--amber);text-decoration:underline">notebook</a> for the full classification report.
         </span>
@@ -972,23 +972,23 @@
             <div class="demo-cases-label">Select a transaction profile</div>
 
             <button class="case-btn active" onclick="selectCase(this, 0)">
-              <div class="case-name">Profile A — Benign address</div>
+              <div class="case-name">Profile A - Benign address</div>
               <div class="case-desc">Normal user with few, spread-out transactions</div>
             </button>
 
             <button class="case-btn" onclick="selectCase(this, 1)">
-              <div class="case-name">Profile B — Locky ransomware</div>
+              <div class="case-name">Profile B - Locky ransomware</div>
               <div class="case-desc">High income, looped, concentrated source</div>
             </button>
 
             <button class="case-btn" onclick="selectCase(this, 2)">
-              <div class="case-name">Profile C — Montrealgang</div>
+              <div class="case-name">Profile C - Montrealgang</div>
               <div class="case-desc">Long chain, many neighbors, high weight</div>
             </button>
 
             <button class="case-btn" onclick="selectCase(this, 3)">
-              <div class="case-name">Profile D — Ambiguous case</div>
-              <div class="case-desc">Mixed signals — low income, some looping</div>
+              <div class="case-name">Profile D - Ambiguous case</div>
+              <div class="case-desc">Mixed signals - low income, some looping</div>
             </button>
           </div>
 
@@ -1072,13 +1072,13 @@
       {
         label: 'white',
         safe: true,
-        detail: 'This address shows no ransomware activity patterns. Low income, few neighbors, no looping — consistent with normal personal use.',
+        detail: 'This address shows no ransomware activity patterns. Low income, few neighbors, no looping - consistent with normal personal use.',
         features: { year: 2017, day: 88, length: 12, weight: 0.04, count: 3, looped: 0, neighbors: 4, income: 0.12 }
       },
       {
         label: 'locky',
         safe: false,
-        detail: 'Matches Locky ransomware patterns. High income concentrated from few sources, looping detected — consistent with ransom collection.',
+        detail: 'Matches Locky ransomware patterns. High income concentrated from few sources, looping detected - consistent with ransom collection.',
         features: { year: 2016, day: 312, length: 850, weight: 0.91, count: 1, looped: 1, neighbors: 2, income: 14.5 }
       },
       {
@@ -1090,7 +1090,7 @@
       {
         label: 'white',
         safe: true,
-        detail: 'Despite some looping activity, the overall profile — low income, moderate neighbors, short chain — is consistent with benign behaviour.',
+        detail: 'Despite some looping activity, the overall profile - low income, moderate neighbors, short chain - is consistent with benign behaviour.',
         features: { year: 2019, day: 55, length: 180, weight: 0.22, count: 6, looped: 1, neighbors: 9, income: 0.38 }
       }
     ];
@@ -1110,7 +1110,7 @@
       const v = document.getElementById('verdict');
       v.className = 'verdict ' + (c.safe ? 'safe' : 'threat');
       v.innerHTML = `
-        <div class="verdict-badge">${c.safe ? 'Clean — No Threat' : 'Ransomware Detected'}</div>
+        <div class="verdict-badge">${c.safe ? 'Clean - No Threat' : 'Ransomware Detected'}</div>
         <div class="verdict-label">${c.label}</div>
         <div class="verdict-detail">${c.detail}</div>
       `;
