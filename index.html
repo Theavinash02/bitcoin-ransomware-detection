@@ -914,28 +914,35 @@
           <div class="result-note">Correct predictions across all classes on the test set.</div>
         </div>
         <div class="result-card">
-          <div class="result-card-label">Class metrics (macro avg)</div>
+          <div class="result-card-label">Class metrics</div>
           <div class="metric-bars">
             <div class="metric-row">
               <div class="metric-header">
-                <span class="metric-name">Precision</span>
-                <span class="metric-val">0.91</span>
+                <span class="metric-name">Precision (weighted)</span>
+                <span class="metric-val">0.99</span>
               </div>
-              <div class="bar-track"><div class="bar-fill" data-w="91"></div></div>
+              <div class="bar-track"><div class="bar-fill" data-w="99"></div></div>
             </div>
             <div class="metric-row">
               <div class="metric-header">
-                <span class="metric-name">Recall</span>
-                <span class="metric-val">0.89</span>
+                <span class="metric-name">Recall (weighted)</span>
+                <span class="metric-val">0.99</span>
               </div>
-              <div class="bar-track"><div class="bar-fill" data-w="89"></div></div>
+              <div class="bar-track"><div class="bar-fill" data-w="99"></div></div>
             </div>
             <div class="metric-row">
               <div class="metric-header">
-                <span class="metric-name">F1-score</span>
-                <span class="metric-val">0.90</span>
+                <span class="metric-name">F1-score (weighted)</span>
+                <span class="metric-val">0.99</span>
               </div>
-              <div class="bar-track"><div class="bar-fill" data-w="90"></div></div>
+              <div class="bar-track"><div class="bar-fill" data-w="99"></div></div>
+            </div>
+            <div class="metric-row">
+              <div class="metric-header">
+                <span class="metric-name">F1-score (macro avg)</span>
+                <span class="metric-val" style="color:#ff6b35">0.13</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" data-w="13" style="background:linear-gradient(90deg,#ff6b35,#ff3d57)"></div></div>
             </div>
           </div>
         </div>
@@ -943,9 +950,8 @@
       <div class="disclaimer reveal" style="transition-delay:.2s">
         <span>⚠</span>
         <span>
-          The high accuracy is influenced by class imbalance - the majority of addresses are benign (white).
-          The v2 upgrade will address this with SMOTE oversampling and per-class weighted metrics.
-          See the <a href="https://github.com/theavinash02/bitcoin-ransomware-detection/blob/main/bitcoin_ransomware.ipynb" style="color:var(--amber);text-decoration:underline">notebook</a> for the full classification report.
+          The 98.87% accuracy is driven by class imbalance - 98.6% of addresses are benign (white), which the model classifies near-perfectly. The macro F1 of 0.13 reveals the real challenge: rare ransomware families with very few samples (e.g. montrealAPT: 2 samples) score 0.00. The v2 upgrade will address this with SMOTE oversampling and a Bayesian Network comparison.
+          See the <a href="https://github.com/theavinash02/bitcoin-ransomware-detection/blob/main/bitcoin_ransomware.ipynb" style="color:var(--amber);text-decoration:underline">full classification report in the notebook</a> for the full classification report.
         </span>
       </div>
     </div>
