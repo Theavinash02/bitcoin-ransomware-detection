@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChainGuard — Analyse Address</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #080c14;
+      --surface: #0d1420;
+      --border:  #1e2d45;
+      --accent:  #00d4ff;
+      --accent2: #0066ff;
+      --text:    #e8edf5;
+      --muted:   #5a7090;
+      --muted2:  #2a3d55;
+      --mono:    'Space Mono', monospace;
+      --sans:    'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(0,212,255,0.12) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: .4;
+    }
+
+    /* ── Navbar ── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,12,20,.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 32px;
+    }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .nav-icon {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #fff;
+    }
+
+    .nav-name {
+      font-family: var(--mono);
+      font-size: 12px; font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: rgba(0,212,255,.08);
+      border: 1px solid rgba(0,212,255,.2);
+      color: var(--accent);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── Main ── */
+    .main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 52px 24px 80px;
+      position: relative; z-index: 1;
+      animation: fadeUp .4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Page header ── */
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px; color: var(--accent);
+      letter-spacing: .14em; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .page-title {
+      font-size: 30px; font-weight: 600;
+      line-height: 1.2; margin-bottom: 12px;
+    }
+
+    .page-desc {
+      font-size: 14px; color: var(--muted);
+      max-width: 560px; line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    /* ── Feature pills ── */
+    .pills {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px; color: var(--muted);
+    }
+
+    .pill-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Form card ── */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+
+    .form-header {
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .form-header-title {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .form-body { padding: 28px 28px 32px; }
+
+    /* ── Section labels ── */
+    .sec-label {
+      font-size: 10px; font-weight: 600;
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+      margin-top: 28px;
+    }
+
+    .sec-label:first-child { margin-top: 0; }
+
+    /* ── Fields grid ── */
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 580px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .nav { padding: 12px 18px; }
+      .main { padding: 32px 16px 60px; }
+      .page-title { font-size: 24px; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+
+    .field label {
+      font-size: 12px; font-weight: 500;
+      color: var(--muted);
+    }
+
+    .field-hint {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted2);
+    }
+
+    .field input {
+      background: #070b12;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      /* hide number spinners */
+      -moz-appearance: textfield;
+    }
+
+    .field input::-webkit-outer-spin-button,
+    .field input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .field input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,212,255,.07);
+    }
+
+    .field input::placeholder { color: #1a2e45; }
+
+    /* ── Submit row ── */
+    .submit-row {
+      margin-top: 30px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 14px;
+    }
+
+    .submit-note {
+      font-family: var(--mono);
+      font-size: 11px; color: var(--muted2);
+    }
+
+    .btn-submit {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none; border-radius: 9px;
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 14px; font-weight: 600;
+      letter-spacing: .03em;
+      cursor: pointer;
+      transition: opacity .2s, transform .12s;
+    }
+
+    .btn-submit:hover  { opacity: .88; }
+    .btn-submit:active { transform: scale(.98); }
+
+    .arrow { transition: transform .2s; }
+    .btn-submit:hover .arrow { transform: translateX(3px); }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-icon">₿</div>
+      <span class="nav-name">ChainGuard</span>
+    </div>
+    <span class="nav-badge">Detection Engine v1.0</span>
+  </nav>
+
+  <main class="main">
+
+    <div class="eyebrow">// Transaction Analysis</div>
+    <h1 class="page-title">Bitcoin Address<br>Ransomware Classifier</h1>
+    <p class="page-desc">
+      Enter the on-chain transaction features for a Bitcoin address.
+      The Random Forest model will classify it against 29 known ransomware
+      families from the BitcoinHeist dataset.
+    </p>
+
+    <div class="pills">
+      <div class="pill">
+        <div class="pill-dot" style="background:#00d4ff;box-shadow:0 0 6px #00d4ff"></div>
+        29 ransomware families
+      </div>
+      <div class="pill">
+        <div class="pill-dot" style="background:#2ed573;box-shadow:0 0 6px #2ed573"></div>
+        Random Forest classifier
+      </div>
+      <div class="pill">
+        <div class="pill-dot" style="background:#ffa502;box-shadow:0 0 6px #ffa502"></div>
+        BitcoinHeist UCI dataset
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-header">
+        <span style="color:var(--accent);font-size:15px">◈</span>
+        <span class="form-header-title">Input Transaction Features</span>
+      </div>
+
+      <div class="form-body">
+        <form action="/predict" method="post">
+
+          <div class="sec-label">Temporal features</div>
+          <div class="fields-grid">
+            <div class="field">
+              <label for="year">Year</label>
+              <span class="field-hint">Year of the transaction (e.g. 2018)</span>
+              <input type="number" id="year" name="year" placeholder="2018" required>
+            </div>
+            <div class="field">
+              <label for="day">Day of year</label>
+              <span class="field-hint">1 – 365</span>
+              <input type="number" id="day" name="day" placeholder="180" min="1" max="365" required>
+            </div>
+          </div>
+
+          <div class="sec-label">Transaction graph features</div>
+          <div class="fields-grid">
+            <div class="field">
+              <label for="length">Length</label>
+              <span class="field-hint">Steps in the transaction chain</span>
+              <input type="number" id="length" name="length" placeholder="2000" required>
+            </div>
+            <div class="field">
+              <label for="weight">Weight</label>
+              <span class="field-hint">Fraction received from single source (0.0 – 1.0)</span>
+              <input type="number" id="weight" name="weight" step="any" placeholder="0.5" required>
+            </div>
+            <div class="field">
+              <label for="count">Count</label>
+              <span class="field-hint">Number of transactions at this address</span>
+              <input type="number" id="count" name="count" placeholder="4" required>
+            </div>
+            <div class="field">
+              <label for="looped">Looped</label>
+              <span class="field-hint">Coins returned to source? (0 = No, 1 = Yes)</span>
+              <input type="number" id="looped" name="looped" placeholder="0" min="0" max="1" required>
+            </div>
+            <div class="field">
+              <label for="neighbors">Neighbors</label>
+              <span class="field-hint">Distinct addresses transacted with</span>
+              <input type="number" id="neighbors" name="neighbors" placeholder="10" required>
+            </div>
+            <div class="field">
+              <label for="income">Income (BTC)</label>
+              <span class="field-hint">Total BTC received before this transaction</span>
+              <input type="number" id="income" name="income" step="any" placeholder="1444.0" required>
+            </div>
+          </div>
+
+          <div class="submit-row">
+            <span class="submit-note">// model: RandomForestClassifier</span>
+            <button class="btn-submit" type="submit">
+              Run Analysis <span class="arrow">→</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>

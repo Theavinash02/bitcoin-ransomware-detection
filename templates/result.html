@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChainGuard — Result</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #080c14;
+      --surface: #0d1420;
+      --border:  #1e2d45;
+      --accent:  #00d4ff;
+      --accent2: #0066ff;
+      --danger:  #ff4757;
+      --safe:    #2ed573;
+      --text:    #e8edf5;
+      --muted:   #5a7090;
+      --mono:    'Space Mono', monospace;
+      --sans:    'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* dot-grid */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(0,212,255,0.12) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: .4;
+    }
+
+    /* colour glow — JS switches class on .glow */
+    .glow {
+      position: fixed;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      filter: blur(130px);
+      opacity: .1;
+      pointer-events: none;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      transition: background .4s;
+    }
+
+    .glow.safe   { background: var(--safe); }
+    .glow.threat { background: var(--danger); }
+    .glow.error  { background: var(--accent); }
+
+    /* ── Wrap ── */
+    .wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 500px;
+      text-align: center;
+      animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.9) translateY(16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ── Status icon ── */
+    .icon-ring {
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      margin: 0 auto 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    .icon-ring.safe {
+      background: rgba(46,213,115,.1);
+      border: 1px solid rgba(46,213,115,.3);
+    }
+
+    .icon-ring.threat {
+      background: rgba(255,71,87,.1);
+      border: 1px solid rgba(255,71,87,.3);
+    }
+
+    .icon-ring.error {
+      background: rgba(0,212,255,.1);
+      border: 1px solid rgba(0,212,255,.3);
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 transparent; }
+      50%       { box-shadow: 0 0 0 10px transparent; }
+    }
+
+    .icon-ring.safe   { animation: pulse-safe 2.5s ease-in-out infinite; }
+    .icon-ring.threat { animation: pulse-threat 2.5s ease-in-out infinite; }
+
+    @keyframes pulse-safe {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(46,213,115,0); }
+      50%       { box-shadow: 0 0 0 10px rgba(46,213,115,.08); }
+    }
+
+    @keyframes pulse-threat {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,71,87,0); }
+      50%       { box-shadow: 0 0 0 10px rgba(255,71,87,.08); }
+    }
+
+    /* ── Result card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 38px 34px;
+      margin-bottom: 14px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    }
+
+    /* status badge */
+    .status-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+    }
+
+    .status-badge.safe {
+      background: rgba(46,213,115,.1);
+      color: var(--safe);
+      border: 1px solid rgba(46,213,115,.25);
+    }
+
+    .status-badge.threat {
+      background: rgba(255,71,87,.1);
+      color: var(--danger);
+      border: 1px solid rgba(255,71,87,.25);
+    }
+
+    .status-badge.error {
+      background: rgba(0,212,255,.1);
+      color: var(--accent);
+      border: 1px solid rgba(0,212,255,.25);
+    }
+
+    /* main label */
+    .result-label {
+      font-family: var(--mono);
+      font-size: 34px; font-weight: 700;
+      margin-bottom: 14px;
+      word-break: break-all;
+      line-height: 1.1;
+    }
+
+    .result-label.safe   { color: var(--safe); }
+    .result-label.threat { color: var(--danger); }
+    .result-label.error  { color: var(--accent); }
+
+    .result-detail {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 26px 0;
+    }
+
+    /* meta info */
+    .meta { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .meta-key {
+      font-family: var(--mono);
+      color: var(--muted);
+    }
+
+    .meta-val {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* ── Action buttons ── */
+    .actions {
+      display: flex; gap: 12px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 14px; font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: border-color .2s, color .2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: opacity .2s;
+    }
+
+    .btn-primary:hover { opacity: .88; }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 18px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow
+    {% if msg == 'white' %}safe
+    {% elif msg == 'Error' %}error
+    {% else %}threat{% endif %}">
+  </div>
+
+  <div class="wrap">
+
+    <div class="icon-ring
+      {% if msg == 'white' %}safe
+      {% elif msg == 'Error' %}error
+      {% else %}threat{% endif %}">
+      {% if msg == 'white' %}✓
+      {% elif msg == 'Error' %}!
+      {% else %}⚠{% endif %}
+    </div>
+
+    <div class="card">
+
+      <div class="status-badge
+        {% if msg == 'white' %}safe
+        {% elif msg == 'Error' %}error
+        {% else %}threat{% endif %}">
+        {% if msg == 'white' %}Clean — No Threat
+        {% elif msg == 'Error' %}Input Error
+        {% else %}Ransomware Detected{% endif %}
+      </div>
+
+      <div class="result-label
+        {% if msg == 'white' %}safe
+        {% elif msg == 'Error' %}error
+        {% else %}threat{% endif %}">
+        {{ msg }}
+      </div>
+
+      <div class="result-detail">{{ detail }}</div>
+
+      <hr class="divider">
+
+      <div class="meta">
+        <div class="meta-row">
+          <span class="meta-key">// model</span>
+          <span class="meta-val">RandomForestClassifier</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">// dataset</span>
+          <span class="meta-val">BitcoinHeist UCI</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">// prediction</span>
+          <span class="meta-val">{{ msg }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <a href="/index" class="btn-secondary">← New Analysis</a>
+      <a href="/" class="btn-primary">Home →</a>
+    </div>
+
+    <div class="footer">// ChainGuard v1.0 &nbsp;·&nbsp; FYP 2024</div>
+  </div>
+
+</body>
+</html>
