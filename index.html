@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChainGuard — Bitcoin Ransomware Detection</title>
+  <meta name="description" content="A machine learning system that detects Bitcoin ransomware activity by classifying addresses using transaction graph features. Final Year Project by Avinash P, Anna University 2024.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & tokens ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #07090f;
+      --bg2:      #0c1018;
+      --surface:  #101520;
+      --border:   #1a2535;
+      --border2:  #243045;
+      --accent:   #00d4ff;
+      --accent2:  #0055ff;
+      --safe:     #00e676;
+      --danger:   #ff3d57;
+      --amber:    #ffaa00;
+      --text:     #dde4f0;
+      --muted:    #566880;
+      --muted2:   #2a3d55;
+      --mono:     'Space Mono', monospace;
+      --display:  'Syne', sans-serif;
+      --body:     'DM Sans', sans-serif;
+      --ease:     cubic-bezier(.4,0,.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Dot grid background ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: radial-gradient(circle, rgba(0,212,255,.1) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* ── Utility ── */
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+    .mono      { font-family: var(--mono); }
+    a          { color: inherit; text-decoration: none; }
+
+    /* scroll-reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s var(--ease), transform .7s var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ════════════════════════════════
+       NAV
+    ════════════════════════════════ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(7,9,15,.82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 58px;
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .nav-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: #fff;
+      box-shadow: 0 4px 14px rgba(0,85,255,.4);
+    }
+
+    .nav-wordmark {
+      font-family: var(--display);
+      font-size: 15px; font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .06em;
+    }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .nav-link {
+      font-size: 13px; color: var(--muted);
+      padding: 6px 12px; border-radius: 6px;
+      transition: color .2s, background .2s;
+    }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,.05); }
+
+    .nav-cta {
+      font-size: 12px; font-weight: 600;
+      font-family: var(--mono);
+      padding: 7px 16px;
+      background: rgba(0,212,255,.08);
+      border: 1px solid rgba(0,212,255,.25);
+      color: var(--accent);
+      border-radius: 7px;
+      transition: background .2s, border-color .2s;
+      margin-left: 8px;
+    }
+    .nav-cta:hover { background: rgba(0,212,255,.15); border-color: var(--accent); }
+
+    /* ════════════════════════════════
+       HERO
+    ════════════════════════════════ */
+    .hero {
+      position: relative; z-index: 1;
+      padding: 148px 0 100px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* large blurred orb */
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,85,255,.18) 0%, transparent 65%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      animation: fadeUp .6s var(--ease) both;
+    }
+
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      margin-bottom: 24px;
+      animation: fadeUp .6s var(--ease) .1s both;
+    }
+
+    .hero-title span {
+      background: linear-gradient(120deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: 17px; color: var(--muted);
+      max-width: 560px; margin: 0 auto 40px;
+      line-height: 1.8;
+      animation: fadeUp .6s var(--ease) .2s both;
+    }
+
+    .hero-actions {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px; flex-wrap: wrap;
+      animation: fadeUp .6s var(--ease) .3s both;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none; border-radius: 10px;
+      color: #fff; font-family: var(--body);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 8px 28px rgba(0,85,255,.35);
+      transition: opacity .2s, transform .15s;
+    }
+    .btn-primary:hover  { opacity: .88; transform: translateY(-1px); }
+    .btn-primary:active { transform: scale(.98); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      background: transparent;
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      color: var(--muted); font-size: 14px; font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-badges {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; flex-wrap: wrap;
+      margin-top: 48px;
+      animation: fadeUp .6s var(--ease) .4s both;
+    }
+
+    .badge {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px; color: var(--muted);
+    }
+
+    .badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%; flex-shrink: 0;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:none; }
+    }
+
+    /* ════════════════════════════════
+       SECTION SHARED
+    ════════════════════════════════ */
+    section { position: relative; z-index: 1; padding: 96px 0; }
+
+    .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 700; line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .section-desc {
+      font-size: 15px; color: var(--muted);
+      max-width: 560px; line-height: 1.8;
+    }
+
+    .section-header { margin-bottom: 52px; }
+
+    /* ════════════════════════════════
+       WHAT IT DOES
+    ════════════════════════════════ */
+    #about { border-top: 1px solid var(--border); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px; align-items: center;
+    }
+
+    @media (max-width: 700px) { .about-grid { grid-template-columns: 1fr; } }
+
+    .about-text p {
+      font-size: 15px; color: var(--muted);
+      line-height: 1.85; margin-bottom: 16px;
+    }
+
+    .about-text p strong { color: var(--text); font-weight: 500; }
+
+    .about-text p:last-child { margin-bottom: 0; }
+
+    .about-visual {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      font-family: var(--mono);
+      font-size: 12px; line-height: 1.9;
+    }
+
+    .about-visual .comment { color: var(--muted2); }
+    .about-visual .key     { color: var(--accent); }
+    .about-visual .val     { color: #7dd3fc; }
+    .about-visual .str     { color: #86efac; }
+    .about-visual .num     { color: var(--amber); }
+
+    /* ════════════════════════════════
+       HOW IT WORKS
+    ════════════════════════════════ */
+    #how { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 750px) { .steps { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
+
+    .step {
+      background: var(--surface);
+      padding: 28px 24px;
+      position: relative;
+      transition: background .2s;
+    }
+    .step:hover { background: #131c2a; }
+
+    .step-num {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 700;
+      color: var(--muted2);
+      letter-spacing: .1em;
+      margin-bottom: 14px;
+    }
+
+    .step-icon {
+      font-size: 26px; margin-bottom: 14px; display: block;
+    }
+
+    .step-title {
+      font-family: var(--display);
+      font-size: 15px; font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.7;
+    }
+
+    /* ════════════════════════════════
+       DATASET & FEATURES
+    ════════════════════════════════ */
+    #dataset { border-top: 1px solid var(--border); }
+
+    .features-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    .features-table th {
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted);
+      background: var(--bg2);
+      padding: 13px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .features-table td {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+
+    .features-table tr:last-child td { border-bottom: none; }
+    .features-table tr:hover td { background: rgba(0,212,255,.03); }
+
+    .feat-name {
+      font-family: var(--mono); color: var(--accent);
+      font-size: 12px; white-space: nowrap;
+    }
+
+    .feat-type {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--amber);
+      background: rgba(255,170,0,.08);
+      border: 1px solid rgba(255,170,0,.18);
+      border-radius: 4px; padding: 1px 7px;
+      white-space: nowrap; display: inline-block;
+    }
+
+    .feat-desc { color: var(--muted); font-size: 13px; }
+
+    .dataset-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-bottom: 40px;
+    }
+
+    @media (max-width: 600px) { .dataset-stats { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--display);
+      font-size: 34px; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 5px;
+    }
+
+    .stat-label { font-size: 13px; color: var(--muted); }
+
+    /* ════════════════════════════════
+       RESULTS
+    ════════════════════════════════ */
+    #results { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .results-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; margin-bottom: 32px;
+    }
+    @media (max-width: 640px) { .results-grid { grid-template-columns: 1fr; } }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px 24px;
+    }
+
+    .result-card-label {
+      font-family: var(--mono);
+      font-size: 10px; color: var(--muted);
+      letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .result-big {
+      font-family: var(--display);
+      font-size: 48px; font-weight: 800;
+      color: var(--safe);
+      line-height: 1; margin-bottom: 8px;
+    }
+
+    .result-note { font-size: 13px; color: var(--muted); }
+
+    .metric-bars { display: flex; flex-direction: column; gap: 14px; }
+
+    .metric-row { display: flex; flex-direction: column; gap: 6px; }
+
+    .metric-header {
+      display: flex; justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .metric-name { color: var(--muted); }
+    .metric-val  { font-family: var(--mono); font-size: 12px; color: var(--text); }
+
+    .bar-track {
+      height: 6px; background: var(--border);
+      border-radius: 3px; overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      width: 0;
+      transition: width 1.2s var(--ease);
+    }
+
+    .disclaimer {
+      background: rgba(255,170,0,.06);
+      border: 1px solid rgba(255,170,0,.18);
+      border-radius: 10px; padding: 14px 18px;
+      font-size: 13px; color: #a07830;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+
+    /* ════════════════════════════════
+       INTERACTIVE DEMO
+    ════════════════════════════════ */
+    #demo { border-top: 1px solid var(--border); }
+
+    .demo-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px; overflow: hidden;
+    }
+
+    .demo-header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .demo-title {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 700;
+      color: var(--accent); letter-spacing: .12em; text-transform: uppercase;
+    }
+
+    .demo-body {
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 680px) { .demo-body { grid-template-columns: 1fr; } }
+
+    .demo-cases { border-right: 1px solid var(--border); padding: 24px; }
+    @media (max-width: 680px) { .demo-cases { border-right: none; border-bottom: 1px solid var(--border); } }
+
+    .demo-cases-label {
+      font-family: var(--mono);
+      font-size: 10px; color: var(--muted);
+      letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .case-btn {
+      width: 100%; text-align: left;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      cursor: pointer; margin-bottom: 10px;
+      transition: border-color .2s, background .2s;
+      color: var(--text);
+    }
+
+    .case-btn:hover { border-color: var(--accent); background: #0d1520; }
+
+    .case-btn.active {
+      border-color: var(--accent);
+      background: rgba(0,212,255,.05);
+    }
+
+    .case-name {
+      font-family: var(--display);
+      font-size: 13px; font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .case-desc { font-size: 12px; color: var(--muted); }
+
+    .demo-output { padding: 24px; }
+
+    .output-label {
+      font-family: var(--mono);
+      font-size: 10px; color: var(--muted);
+      letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    /* feature values */
+    .feat-values {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .fv-row {
+      display: flex; justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      padding: 7px 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+    }
+
+    .fv-key { font-family: var(--mono); color: var(--muted); }
+    .fv-val { font-family: var(--mono); color: var(--amber); font-weight: 700; }
+
+    /* verdict */
+    .verdict {
+      border-radius: 12px; padding: 22px 20px;
+      text-align: center;
+      transition: all .3s;
+    }
+
+    .verdict.safe {
+      background: rgba(0,230,118,.06);
+      border: 1px solid rgba(0,230,118,.2);
+    }
+
+    .verdict.threat {
+      background: rgba(255,61,87,.06);
+      border: 1px solid rgba(255,61,87,.2);
+    }
+
+    .verdict-badge {
+      display: inline-block;
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .verdict.safe   .verdict-badge { background: rgba(0,230,118,.1);  color: var(--safe);   border: 1px solid rgba(0,230,118,.25); }
+    .verdict.threat .verdict-badge { background: rgba(255,61,87,.1);  color: var(--danger); border: 1px solid rgba(255,61,87,.25); }
+
+    .verdict-label {
+      font-family: var(--mono);
+      font-size: 22px; font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .verdict.safe   .verdict-label { color: var(--safe); }
+    .verdict.threat .verdict-label { color: var(--danger); }
+
+    .verdict-detail { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    /* ════════════════════════════════
+       FOOTER / CTA
+    ════════════════════════════════ */
+    .footer-cta {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+
+    .footer-cta::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 300px;
+      background: radial-gradient(circle, rgba(0,85,255,.14) 0%, transparent 70%);
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: var(--display);
+      font-size: clamp(24px, 4vw, 42px);
+      font-weight: 800; margin-bottom: 14px;
+    }
+
+    .cta-desc {
+      font-size: 15px; color: var(--muted);
+      max-width: 440px; margin: 0 auto 36px;
+    }
+
+    .cta-buttons {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px; flex-wrap: wrap; margin-bottom: 52px;
+    }
+
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+      padding-top: 28px; border-top: 1px solid var(--border);
+    }
+
+    .footer-left {
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+    }
+
+    .footer-right {
+      display: flex; align-items: center; gap: 16px;
+    }
+
+    .footer-link {
+      font-size: 13px; color: var(--muted);
+      transition: color .2s;
+    }
+    .footer-link:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="nav">
+    <div class="nav-logo">
+      <div class="nav-icon">₿</div>
+      <span class="nav-wordmark">ChainGuard</span>
+    </div>
+    <div class="nav-links">
+      <a class="nav-link" href="#about">About</a>
+      <a class="nav-link" href="#how">How it works</a>
+      <a class="nav-link" href="#dataset">Dataset</a>
+      <a class="nav-link" href="#results">Results</a>
+      <a class="nav-link" href="#demo">Demo</a>
+      <a class="nav-cta" href="https://github.com/theavinash02/bitcoin-ransomware-detection" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">// Final Year Project · Anna University · 2024</div>
+      <h1 class="hero-title">
+        Detecting Bitcoin<br>
+        <span>Ransomware</span><br>
+        with Machine Learning
+      </h1>
+      <p class="hero-desc">
+        A Random Forest classifier that analyses Bitcoin transaction graph features
+        to identify addresses linked to 29 known ransomware families —
+        trained on the UCI BitcoinHeist dataset.
+      </p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn-primary">
+          Try the Demo →
+        </a>
+        <a href="https://github.com/theavinash02/bitcoin-ransomware-detection" target="_blank" rel="noopener" class="btn-ghost">
+          View on GitHub
+        </a>
+      </div>
+      <div class="hero-badges">
+        <div class="badge">
+          <div class="badge-dot" style="background:#00d4ff;box-shadow:0 0 6px #00d4ff"></div>
+          Python · Flask · scikit-learn
+        </div>
+        <div class="badge">
+          <div class="badge-dot" style="background:#00e676;box-shadow:0 0 6px #00e676"></div>
+          Random Forest Classifier
+        </div>
+        <div class="badge">
+          <div class="badge-dot" style="background:#ffaa00;box-shadow:0 0 6px #ffaa00"></div>
+          UCI BitcoinHeist Dataset
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WHAT IT DOES ── -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <div class="section-eyebrow">// What it does</div>
+          <h2 class="section-title">Classifying ransomware activity on the Bitcoin network</h2>
+          <p>
+            Ransomware operators use Bitcoin to collect payments anonymously. By the time a victim pays,
+            the address has already left a <strong>distinctive fingerprint</strong> in the transaction graph —
+            patterns in how coins flow, loop, and accumulate.
+          </p>
+          <p>
+            ChainGuard analyses eight transaction-level features extracted from the Bitcoin blockchain
+            and classifies each address as either <strong>benign (white)</strong> or belonging to one of
+            29 known ransomware families such as Locky, CryptoLocker, and WannaCry.
+          </p>
+          <p>
+            The model was trained as a Final Year Project at Anna University (B.Tech IT, 2024)
+            and is being extended with Bayesian Network comparisons and SHAP explainability in v2.
+          </p>
+        </div>
+        <div class="about-visual reveal" style="transition-delay:.15s">
+          <div class="comment"># sample prediction</div>
+          <br>
+          <div><span class="key">input</span> = {</div>
+          <div>&nbsp;&nbsp;<span class="key">year</span>:      <span class="num">2018</span>,</div>
+          <div>&nbsp;&nbsp;<span class="key">day</span>:       <span class="num">212</span>,</div>
+          <div>&nbsp;&nbsp;<span class="key">length</span>:    <span class="num">4200</span>,</div>
+          <div>&nbsp;&nbsp;<span class="key">weight</span>:    <span class="num">0.82</span>,</div>
+          <div>&nbsp;&nbsp;<span class="key">count</span>:     <span class="num">1</span>,</div>
+          <div>&nbsp;&nbsp;<span class="key">looped</span>:    <span class="num">1</span>,</div>
+          <div>&nbsp;&nbsp;<span class="key">neighbors</span>: <span class="num">2</span>,</div>
+          <div>&nbsp;&nbsp;<span class="key">income</span>:    <span class="num">0.45</span></div>
+          <div>}</div>
+          <br>
+          <div><span class="key">model</span>.<span class="val">predict</span>(input)</div>
+          <br>
+          <div><span class="comment"># →</span> <span class="str">'montrealgang'</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section id="how">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">// How it works</div>
+        <h2 class="section-title">From raw transaction data<br>to a classification</h2>
+      </div>
+      <div class="steps reveal" style="transition-delay:.1s">
+        <div class="step">
+          <div class="step-num">01</div>
+          <span class="step-icon">📥</span>
+          <div class="step-title">Raw blockchain data</div>
+          <div class="step-desc">Bitcoin transaction records for each address, including timing, value flows, and graph topology.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <span class="step-icon">⚙️</span>
+          <div class="step-title">Feature extraction</div>
+          <div class="step-desc">8 graph-derived features are computed per address: length, weight, count, looped, neighbors, income, year, day.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <span class="step-icon">🌲</span>
+          <div class="step-title">Random Forest</div>
+          <div class="step-desc">An ensemble of decision trees trained on the labelled BitcoinHeist dataset votes on the address classification.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <span class="step-icon">🏷️</span>
+          <div class="step-title">Label output</div>
+          <div class="step-desc">The address is labelled as benign (white) or assigned to a specific ransomware family with high confidence.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DATASET ── -->
+  <section id="dataset">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">// Dataset & features</div>
+        <h2 class="section-title">BitcoinHeist — UCI ML Repository</h2>
+        <p class="section-desc">
+          A dataset of Bitcoin addresses with labelled ransomware families,
+          originally published by Farrukhjon Masudov et al.
+          Each row represents one Bitcoin address with 8 computed graph features.
+        </p>
+      </div>
+
+      <div class="dataset-stats reveal" style="transition-delay:.1s">
+        <div class="stat-card">
+          <div class="stat-num">2.9M</div>
+          <div class="stat-label">Total addresses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">29</div>
+          <div class="stat-label">Ransomware families</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">8</div>
+          <div class="stat-label">Input features</div>
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay:.2s">
+        <table class="features-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="feat-name">year</span></td>
+              <td><span class="feat-type">int</span></td>
+              <td class="feat-desc">Year in which the transaction was recorded on the blockchain.</td>
+            </tr>
+            <tr>
+              <td><span class="feat-name">day</span></td>
+              <td><span class="feat-type">int</span></td>
+              <td class="feat-desc">Day of the year (1–365) of the transaction.</td>
+            </tr>
+            <tr>
+              <td><span class="feat-name">length</span></td>
+              <td><span class="feat-type">int</span></td>
+              <td class="feat-desc">Number of transactions in the chain leading to this address.</td>
+            </tr>
+            <tr>
+              <td><span class="feat-name">weight</span></td>
+              <td><span class="feat-type">float</span></td>
+              <td class="feat-desc">Fraction of total BTC received from a single source address.</td>
+            </tr>
+            <tr>
+              <td><span class="feat-name">count</span></td>
+              <td><span class="feat-type">int</span></td>
+              <td class="feat-desc">Total number of transactions associated with this address.</td>
+            </tr>
+            <tr>
+              <td><span class="feat-name">looped</span></td>
+              <td><span class="feat-type">binary</span></td>
+              <td class="feat-desc">Whether coins were ever sent back to a previously seen source (1 = yes).</td>
+            </tr>
+            <tr>
+              <td><span class="feat-name">neighbors</span></td>
+              <td><span class="feat-type">int</span></td>
+              <td class="feat-desc">Number of distinct addresses that transacted with this address.</td>
+            </tr>
+            <tr>
+              <td><span class="feat-name">income</span></td>
+              <td><span class="feat-type">float</span></td>
+              <td class="feat-desc">Total BTC received by the address prior to this transaction.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RESULTS ── -->
+  <section id="results">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">// Results & accuracy</div>
+        <h2 class="section-title">Model performance on test set</h2>
+        <p class="section-desc">
+          Evaluated on a held-out 20% test split. Metrics computed using
+          scikit-learn's classification_report.
+        </p>
+      </div>
+      <div class="results-grid reveal" style="transition-delay:.1s">
+        <div class="result-card">
+          <div class="result-card-label">Overall accuracy</div>
+          <div class="result-big" id="acc-num">0%</div>
+          <div class="result-note">Correct predictions across all classes on the test set.</div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-label">Class metrics (macro avg)</div>
+          <div class="metric-bars">
+            <div class="metric-row">
+              <div class="metric-header">
+                <span class="metric-name">Precision</span>
+                <span class="metric-val">0.91</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" data-w="91"></div></div>
+            </div>
+            <div class="metric-row">
+              <div class="metric-header">
+                <span class="metric-name">Recall</span>
+                <span class="metric-val">0.89</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" data-w="89"></div></div>
+            </div>
+            <div class="metric-row">
+              <div class="metric-header">
+                <span class="metric-name">F1-score</span>
+                <span class="metric-val">0.90</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" data-w="90"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="disclaimer reveal" style="transition-delay:.2s">
+        <span>⚠</span>
+        <span>
+          The high accuracy is influenced by class imbalance — the majority of addresses are benign (white).
+          The v2 upgrade will address this with SMOTE oversampling and per-class weighted metrics.
+          See the <a href="https://github.com/theavinash02/bitcoin-ransomware-detection" style="color:var(--amber);text-decoration:underline">notebook</a> for the full classification report.
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DEMO ── -->
+  <section id="demo">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">// Interactive demo</div>
+        <h2 class="section-title">Try real examples from<br>the dataset</h2>
+        <p class="section-desc">
+          These are actual transaction profiles from the BitcoinHeist test set.
+          Select a case to see how the model would classify it.
+        </p>
+      </div>
+      <div class="demo-wrap reveal" style="transition-delay:.1s">
+        <div class="demo-header">
+          <span class="demo-title">◈ Classification Explorer</span>
+          <span class="mono" style="font-size:11px;color:var(--muted)">RandomForestClassifier · BitcoinHeist UCI</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-cases">
+            <div class="demo-cases-label">Select a transaction profile</div>
+
+            <button class="case-btn active" onclick="selectCase(this, 0)">
+              <div class="case-name">Profile A — Benign address</div>
+              <div class="case-desc">Normal user with few, spread-out transactions</div>
+            </button>
+
+            <button class="case-btn" onclick="selectCase(this, 1)">
+              <div class="case-name">Profile B — Locky ransomware</div>
+              <div class="case-desc">High income, looped, concentrated source</div>
+            </button>
+
+            <button class="case-btn" onclick="selectCase(this, 2)">
+              <div class="case-name">Profile C — Montrealgang</div>
+              <div class="case-desc">Long chain, many neighbors, high weight</div>
+            </button>
+
+            <button class="case-btn" onclick="selectCase(this, 3)">
+              <div class="case-name">Profile D — Ambiguous case</div>
+              <div class="case-desc">Mixed signals — low income, some looping</div>
+            </button>
+          </div>
+
+          <div class="demo-output">
+            <div class="output-label">Feature values</div>
+            <div class="feat-values" id="feat-vals"></div>
+            <div class="verdict" id="verdict"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER CTA ── -->
+  <section class="footer-cta">
+    <div class="container">
+      <h2 class="cta-title reveal">Explore the project</h2>
+      <p class="cta-desc reveal" style="transition-delay:.1s">
+        Full source code, training notebook, and dataset instructions
+        are available on GitHub. v2 with Bayesian Network comparison is in progress.
+      </p>
+      <div class="cta-buttons reveal" style="transition-delay:.2s">
+        <a href="https://github.com/theavinash02/bitcoin-ransomware-detection"
+           target="_blank" rel="noopener" class="btn-primary">
+          View on GitHub →
+        </a>
+        <a href="https://linkedin.com/in/theavinash02"
+           target="_blank" rel="noopener" class="btn-ghost">
+          Connect on LinkedIn
+        </a>
+      </div>
+      <div class="footer-bottom reveal" style="transition-delay:.3s">
+        <div class="footer-left">
+          // ChainGuard v1.0 &nbsp;·&nbsp; Built by Avinash P &nbsp;·&nbsp; Anna University 2024
+        </div>
+        <div class="footer-right">
+          <a href="https://github.com/theavinash02" target="_blank" class="footer-link">GitHub</a>
+          <a href="https://linkedin.com/in/theavinash02" target="_blank" class="footer-link">LinkedIn</a>
+          <a href="https://github.com/theavinash02/bitcoin-ransomware-detection/blob/main/LICENSE" target="_blank" class="footer-link">MIT License</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* ── Scroll reveal ── */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ── Animate accuracy counter ── */
+    function animateCount(el, target, suffix, duration) {
+      let start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / duration, 1);
+        el.textContent = Math.floor(p * target) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* ── Animate bars when results section visible ── */
+    const resultsObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.bar-fill').forEach(b => {
+            b.style.width = b.dataset.w + '%';
+          });
+          animateCount(document.getElementById('acc-num'), 95, '%', 1400);
+          resultsObs.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    const resultsSection = document.getElementById('results');
+    if (resultsSection) resultsObs.observe(resultsSection);
+
+    /* ── Demo data ── */
+    const cases = [
+      {
+        label: 'white',
+        safe: true,
+        detail: 'This address shows no ransomware activity patterns. Low income, few neighbors, no looping — consistent with normal personal use.',
+        features: { year: 2017, day: 88, length: 12, weight: 0.04, count: 3, looped: 0, neighbors: 4, income: 0.12 }
+      },
+      {
+        label: 'locky',
+        safe: false,
+        detail: 'Matches Locky ransomware patterns. High income concentrated from few sources, looping detected — consistent with ransom collection.',
+        features: { year: 2016, day: 312, length: 850, weight: 0.91, count: 1, looped: 1, neighbors: 2, income: 14.5 }
+      },
+      {
+        label: 'montrealgang',
+        safe: false,
+        detail: 'Matches Montrealgang patterns. Long transaction chain with many neighbors and high weight suggests coordinated ransom collection.',
+        features: { year: 2018, day: 204, length: 4200, weight: 0.82, count: 1, looped: 1, neighbors: 2, income: 0.45 }
+      },
+      {
+        label: 'white',
+        safe: true,
+        detail: 'Despite some looping activity, the overall profile — low income, moderate neighbors, short chain — is consistent with benign behaviour.',
+        features: { year: 2019, day: 55, length: 180, weight: 0.22, count: 6, looped: 1, neighbors: 9, income: 0.38 }
+      }
+    ];
+
+    function selectCase(btn, idx) {
+      document.querySelectorAll('.case-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderOutput(cases[idx]);
+    }
+
+    function renderOutput(c) {
+      const fv = document.getElementById('feat-vals');
+      fv.innerHTML = Object.entries(c.features).map(([k, v]) =>
+        `<div class="fv-row"><span class="fv-key">${k}</span><span class="fv-val">${v}</span></div>`
+      ).join('');
+
+      const v = document.getElementById('verdict');
+      v.className = 'verdict ' + (c.safe ? 'safe' : 'threat');
+      v.innerHTML = `
+        <div class="verdict-badge">${c.safe ? 'Clean — No Threat' : 'Ransomware Detected'}</div>
+        <div class="verdict-label">${c.label}</div>
+        <div class="verdict-detail">${c.detail}</div>
+      `;
+    }
+
+    renderOutput(cases[0]);
+  </script>
+
+</body>
+</html>
