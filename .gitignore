@@ -1,6 +1,7 @@
 # Model file (regenerate by running the notebook)
 *.pkl
 *.pickle
+*.csv
 
 # Python
 __pycache__/
