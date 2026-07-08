@@ -14,7 +14,7 @@ project uses the [BitcoinHeist dataset](https://archive.ics.uci.edu/dataset/526/
 to classify Bitcoin addresses as belonging to one of several known ransomware families or as
 benign (`white`), based on nothing but transaction graph statistics.
 
-The label distribution is heavily skewed — 98.6% of addresses are benign, and several ransomware
+The label distribution is heavily skewed - 98.6% of addresses are benign, and several ransomware
 families are represented by only a handful of known addresses in the entire dataset. That
 imbalance, and being honest about what it does to a naive accuracy metric, is the central
 methodological thread of this project.
@@ -23,8 +23,8 @@ methodological thread of this project.
 
 ## Dataset
 
-**BitcoinHeist Ransomware Address Dataset** — UCI Machine Learning Repository
-*Farrukhjon Masudov et al. — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)*
+**BitcoinHeist Ransomware Address Dataset** - UCI Machine Learning Repository
+*Farrukhjon Masudov et al. - [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)*
 
 | Feature | Type | Description |
 |---|---|---|
@@ -46,15 +46,15 @@ methodological thread of this project.
 
 1. **Rare-class handling:** 11 of the 29 ransomware families have fewer than 10 total samples in
    the entire dataset. These are grouped into a single `rare_family` bucket before splitting,
-   rather than silently dropped — a documented, honest trade-off in resolution.
+   rather than silently dropped - a documented, honest trade-off in resolution.
 2. **Stratified split:** an 80/20 train/test split, stratified by label, so every class keeps its
-   proportional representation in both splits — important on data this imbalanced.
+   proportional representation in both splits - important on data this imbalanced.
 3. **Baseline model comparison:** Logistic Regression, Decision Tree, and Random Forest are
    compared using 5-fold stratified cross-validation on the training set (accuracy, weighted F1,
    macro F1) before committing to a final model.
 4. **SMOTE, leakage-safe:** the chosen model (Random Forest) is combined with SMOTE inside a
    single pipeline, so oversampling is refit independently within each cross-validation fold's
-   training portion — never applied once to the whole training set beforehand, and never applied
+   training portion - never applied once to the whole training set beforehand, and never applied
    to the test set.
 5. **Final evaluation:** the SMOTE + Random Forest pipeline is refit once on the full training set
    and evaluated on the held-out, untouched test set.
@@ -74,11 +74,11 @@ methodological thread of this project.
 | Random Forest | 0.9867 ± 0.0001 | 0.9808 ± 0.0001 | 0.1044 ± 0.0021 |
 
 Decision Tree edges out Random Forest on weighted and macro F1 point estimates here, but with
-roughly 8x the fold-to-fold variance — an unstable, fold-dependent edge rather than a reliable
+roughly 8x the fold-to-fold variance - an unstable, fold-dependent edge rather than a reliable
 one. Random Forest is carried forward for its stability and because its ensemble structure is
 what makes SHAP's `TreeExplainer` straightforward to apply cleanly.
 
-**Final model** — SMOTE + Random Forest, evaluated on the held-out test set:
+**Final model** - SMOTE + Random Forest, evaluated on the held-out test set:
 
 | Metric | Score |
 |---|---|
@@ -92,7 +92,7 @@ single lucky or unlucky draw.)
 The Random Forest's trees are capped (`max_depth=20`, `min_samples_leaf=25`) so that SHAP's
 `TreeExplainer` can run without exhausting memory. That constraint has a real, measurable cost:
 several ransomware families with thousands of test samples and high precision (e.g.
-`montrealCryptoLocker`, `paduaCryptoWall`, `princetonLocky`) collapse to near-zero recall — the
+`montrealCryptoLocker`, `paduaCryptoWall`, `princetonLocky`) collapse to near-zero recall - the
 model is usually right when it does flag them, but a shallower forest can route far fewer test
 cases to them in the first place. SMOTE helps the model learn these classes exist; it can't fully
 offset the depth constraint. This is reported honestly as a trade-off between interpretability
@@ -100,12 +100,12 @@ and raw recall on rare classes, not as a claim that the imbalance correction "di
 
 **SHAP interpretation:** `year` is the single dominant feature for both the benign (`white`) and
 the largest ransomware family (`paduaCryptoWall`) classes, by a wide margin over every other
-feature. That's a genuinely useful but slightly uncomfortable finding: `count` and `neighbors` —
+feature. That's a genuinely useful but slightly uncomfortable finding: `count` and `neighbors` -
 the features that, per the payment-consolidation intuition, should be the clearest ransomware
-signal — rank behind purely temporal features for `paduaCryptoWall`. The likely explanation is
+signal - rank behind purely temporal features for `paduaCryptoWall`. The likely explanation is
 that this was a real campaign active within a narrow window of the 2011–2018 dataset, so the
 model may be partly keying on *when* an address was active rather than a transaction-shape
-fingerprint that would generalize beyond this dataset — see the notebook's Discussion section for
+fingerprint that would generalize beyond this dataset - see the notebook's Discussion section for
 the full discussion of this and other limitations.
 
 ---
@@ -156,13 +156,13 @@ jupyter notebook bitcoin_ransomware.ipynb
 ## Limitations
 
 - This is a research/learning project on a public benchmark dataset covering 2011–2018 Bitcoin
-  activity — not a live monitoring feed. Nothing here claims real-time ransomware detection or
+  activity - not a live monitoring feed. Nothing here claims real-time ransomware detection or
   production readiness.
 - Grouping 11 ultra-rare families into a single `rare_family` bucket is a real loss of
-  resolution — those families remain indistinguishable from each other in this analysis.
+  resolution - those families remain indistinguishable from each other in this analysis.
 - SMOTE interpolates within existing minority-class structure; it cannot manufacture genuinely
   new information about families that had only a handful of real addresses to begin with.
-- SHAP explains association and feature attribution learned by this specific model — it is not a
+- SHAP explains association and feature attribution learned by this specific model - it is not a
   causal account of *why* ransomware addresses behave the way they do.
 
 ---
@@ -171,10 +171,10 @@ jupyter notebook bitcoin_ransomware.ipynb
 
 > Farrukhjon Masudov, Taha Belkhouja, Yan Shi, Janardhan Rao Doppa, Haifeng Chen, Srikanth V. Krishnamurthy.
 > *BitcoinHeist: Topological Data Analysis for Ransomware Detection on the Bitcoin Blockchain.*
-> IJCAI 2020. [UCI Repository](https://archive.ics.uci.edu/dataset/526/bitcoinheistransomwareaddressdataset) — CC BY 4.0.
+> IJCAI 2020. [UCI Repository](https://archive.ics.uci.edu/dataset/526/bitcoinheistransomwareaddressdataset) - CC BY 4.0.
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](LICENSE) for details.
