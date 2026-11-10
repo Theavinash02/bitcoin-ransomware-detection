@@ -148,14 +148,15 @@ interesting. The real test years are {results["test_base_rate"]:.1%} ransomware.
 
 ```python
 from gradio_client import Client
-client = Client("<your-space-id>")
+client = Client("theavinash02/bitcoin-ransomware-detector")
 print(client.predict("2017-03-01", 1.0, 1, 2, 10, 0.5, 0, api_name="/manual"))
 ```
 
 With curl:
 
 ```bash
-curl -X POST <space-url>/gradio_api/call/manual -H "Content-Type: application/json" \\
+curl -X POST https://theavinash02-bitcoin-ransomware-detector.hf.space/gradio_api/call/manual \\
+  -H "Content-Type: application/json" \\
   -d '{{"data": ["2017-03-01", 1.0, 1, 2, 10, 0.5, 0]}}'
 ```
 

@@ -12,8 +12,7 @@ model I tried ranks ransomware only slightly better than chance. On Ransomwhere 
 of the unseen addresses from families BitcoinHeist already has (mostly Locky, 2016), and none from
 families it has never seen.
 
-Live demo: not deployed yet. `app/` holds a Gradio app ready for a Hugging Face Space (see
-[Demo](#demo)).
+Live demo: [huggingface.co/spaces/theavinash02/bitcoin-ransomware-detector](https://huggingface.co/spaces/theavinash02/bitcoin-ransomware-detector)
 
 ## Results
 
@@ -116,7 +115,11 @@ cd app && python app.py
 
 ![Demo](docs/demo.jpg)
 
-To publish it, create a Gradio Space on Hugging Face and push the contents of `app/` to it.
+The live copy runs on a free ZeroGPU Space. To update it after `export-demo`:
+
+```bash
+hf upload theavinash02/bitcoin-ransomware-detector app . --repo-type=space
+```
 
 ![Demo: one random 2017 Cerber address scored by the app](docs/demo.jpg)
 
