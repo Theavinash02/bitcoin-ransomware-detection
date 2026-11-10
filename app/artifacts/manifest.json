@@ -1,0 +1,13 @@
+{
+  "dev": false,
+  "sizes_mb": {
+    "btc_usd.parquet": 0.11,
+    "calibrator.json": 0.0,
+    "day_quantiles.parquet": 3.18,
+    "demo_sample.parquet": 0.25,
+    "features.json": 0.0,
+    "model.txt": 1.22,
+    "results.json": 0.0,
+    "threshold.json": 0.0
+  }
+}

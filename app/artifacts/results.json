@@ -1,0 +1,92 @@
+{
+  "headline": [
+    {
+      "Run": "Old protocol (random 80/20, RF)",
+      "Test PR-AUC": 0.41167241887925926,
+      "Recall at FPR 0.1%": 0.19364964384884703,
+      "Note": "random split, same addresses on both sides"
+    },
+    {
+      "Run": "Baseline B (6 original features, time split)",
+      "Test PR-AUC": 0.0070453481022662995,
+      "Recall at FPR 0.1%": 0.0008761682242990654,
+      "Note": "trained before Jul 2016, tested on 2017-18"
+    },
+    {
+      "Run": "Final LightGBM (time split)",
+      "Test PR-AUC": 0.015321356922566785,
+      "Recall at FPR 0.1%": 0.0008761682242990654,
+      "Note": "21 features, threshold fixed on validation"
+    }
+  ],
+  "test_base_rate": 0.004949886733754209,
+  "lofo": [
+    {
+      "Held-out family": "princetonCerber",
+      "Addresses": 9177,
+      "Recall held out": 0.0016263688604575518,
+      "Test white FPR (%)": 0.06
+    },
+    {
+      "Held-out family": "princetonLocky",
+      "Addresses": 6584,
+      "Recall held out": 0.0003018867924528302,
+      "Test white FPR (%)": 0.05
+    },
+    {
+      "Held-out family": "paduaCryptoWall",
+      "Addresses": 1894,
+      "Recall held out": 0.00048426150121065375,
+      "Test white FPR (%)": 0.08
+    },
+    {
+      "Held-out family": "montrealCryptoLocker",
+      "Addresses": 1509,
+      "Recall held out": 0.00032206119162640903,
+      "Test white FPR (%)": 0.0
+    },
+    {
+      "Held-out family": "montrealCryptXXX",
+      "Addresses": 1354,
+      "Recall held out": 0.0012401818933443572,
+      "Test white FPR (%)": 0.05
+    }
+  ],
+  "ransomwhere": [
+    {
+      "Slice": "all addresses",
+      "Addresses": 1084,
+      "Address recall": 0.03136531365313653
+    },
+    {
+      "Slice": "families also in BitcoinHeist",
+      "Addresses": 75,
+      "Address recall": 0.4533333333333333
+    },
+    {
+      "Slice": "families new to BitcoinHeist",
+      "Addresses": 288,
+      "Address recall": 0.0
+    },
+    {
+      "Slice": "of which NotNevada",
+      "Addresses": 3,
+      "Address recall": 0.0
+    },
+    {
+      "Slice": "new families without NotNevada",
+      "Addresses": 285,
+      "Address recall": 0.0
+    },
+    {
+      "Slice": "Unlabeled",
+      "Addresses": 721,
+      "Address recall": 0.0
+    },
+    {
+      "Slice": "payments after 2018",
+      "Addresses": 962,
+      "Address recall": 0.0
+    }
+  ]
+}

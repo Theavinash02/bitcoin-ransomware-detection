@@ -1,0 +1,23 @@
+[
+  "length",
+  "weight",
+  "count",
+  "looped",
+  "neighbors",
+  "income",
+  "avg_payment_btc",
+  "count_per_neighbor",
+  "income_usd",
+  "log_income_usd",
+  "round_usd_50",
+  "round_usd_100",
+  "round_usd_500",
+  "round_btc_0.1",
+  "round_btc_0.5",
+  "round_btc_1",
+  "round_min",
+  "pct_income_usd",
+  "pct_count",
+  "pct_neighbors",
+  "pct_length"
+]

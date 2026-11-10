@@ -1,0 +1,13 @@
+{
+  "raw_threshold": 0.9437166394685528,
+  "calibrated_at_threshold": 0.5940223744022991,
+  "target_fpr": 0.001,
+  "top_k_per_day": 10,
+  "calibration": {
+    "method": "sigmoid",
+    "oof_brier": {
+      "isotonic": 0.029576888847202488,
+      "sigmoid": 0.029431616883939082
+    }
+  }
+}
