@@ -1,180 +1,162 @@
 # Bitcoin Ransomware Detection
 
-A machine learning analysis that classifies Bitcoin addresses as ransomware-associated or benign
-using transaction graph features.
+I started this as my final year project (B.Tech IT, Anna University, 2024): a Random Forest on the
+BitcoinHeist dataset that scored 98.65% accuracy. Then I tested it the way it would actually be used,
+on later years and on ransomware it had never seen, and most of that number went away. This repo is
+the rebuilt version: a time-based evaluation, payment-behavior features, an outside test on newer
+ransomware, and a small demo.
 
-Built as a Final Year Project (B.Tech Information Technology, Anna University, 2024).
+**Short version:** with a random split the old setup looks strong because the same addresses and
+the same weeks land on both sides. Trained on data before July 2016 and tested on 2017-18, every
+model I tried ranks ransomware only slightly better than chance. On Ransomwhere it catches about 45%
+of the unseen addresses from families BitcoinHeist already has (mostly Locky, 2016), and none from
+families it has never seen.
 
----
-
-## Problem Statement
-
-Bitcoin has been widely used by ransomware operators to collect payments anonymously. This
-project uses the [BitcoinHeist dataset](https://archive.ics.uci.edu/dataset/526/bitcoinheistransomwareaddressdataset)
-to classify Bitcoin addresses as belonging to one of several known ransomware families or as
-benign (`white`), based on nothing but transaction graph statistics.
-
-The label distribution is heavily skewed - 98.6% of addresses are benign, and several ransomware
-families are represented by only a handful of known addresses in the entire dataset. That
-imbalance, and being honest about what it does to a naive accuracy metric, is the central
-methodological thread of this project.
-
----
-
-## Dataset
-
-**BitcoinHeist Ransomware Address Dataset** - UCI Machine Learning Repository
-*Farrukhjon Masudov et al. - [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)*
-
-| Feature | Type | Description |
-|---|---|---|
-| `year` | int | Year of transaction |
-| `day` | int | Day of year (1–365) |
-| `length` | int | Length of the transaction chain |
-| `weight` | float | Fraction of BTC received from a single source |
-| `count` | int | Number of transactions at the address |
-| `looped` | binary | Whether coins were sent back to the source |
-| `neighbors` | int | Number of distinct addresses transacted with |
-| `income` | float | Total BTC income received |
-
-**Target:** 29 ransomware family labels + `white` (benign)
-**Dataset size:** 2,916,697 addresses
-
----
-
-## Methodology
-
-1. **Rare-class handling:** 11 of the 29 ransomware families have fewer than 10 total samples in
-   the entire dataset. These are grouped into a single `rare_family` bucket before splitting,
-   rather than silently dropped - a documented, honest trade-off in resolution.
-2. **Stratified split:** an 80/20 train/test split, stratified by label, so every class keeps its
-   proportional representation in both splits - important on data this imbalanced.
-3. **Baseline model comparison:** Logistic Regression, Decision Tree, and Random Forest are
-   compared using 5-fold stratified cross-validation on the training set (accuracy, weighted F1,
-   macro F1) before committing to a final model.
-4. **SMOTE, leakage-safe:** the chosen model (Random Forest) is combined with SMOTE inside a
-   single pipeline, so oversampling is refit independently within each cross-validation fold's
-   training portion - never applied once to the whole training set beforehand, and never applied
-   to the test set.
-5. **Final evaluation:** the SMOTE + Random Forest pipeline is refit once on the full training set
-   and evaluated on the held-out, untouched test set.
-6. **SHAP interpretation:** `TreeExplainer` on the final Random Forest, computed on a
-   representative 8,000-row sample, explaining which features actually drive each prediction.
-
----
+Live demo: not deployed yet. `app/` holds a Gradio app ready for a Hugging Face Space (see
+[Demo](#demo)).
 
 ## Results
 
-**Baseline comparison** (5-fold stratified cross-validation on the training set, no resampling):
+All numbers below are written into this file by `ransomdet export-demo` from `reports/*.json`.
 
-| Model | Accuracy | Weighted F1 | Macro F1 |
-|---|---|---|---|
-| Logistic Regression | 0.9858 ± 0.0000 | 0.9787 ± 0.0000 | 0.0523 ± 0.0000 |
-| Decision Tree | 0.9823 ± 0.0002 | 0.9827 ± 0.0001 | 0.2209 ± 0.0160 |
-| Random Forest | 0.9867 ± 0.0001 | 0.9808 ± 0.0001 | 0.1044 ± 0.0021 |
+<!-- results:start -->
+| Setup | Test PR-AUC | Recall at 0.1% FPR | Accuracy |
+| --- | --- | --- | --- |
+| FYP protocol: random 80/20 split, Random Forest | 0.412 | 0.194 | 0.9856 |
+| Time split, 6 original features (Baseline B) | 0.007 | 0.001 | - |
+| Time split, final LightGBM, 21 features | 0.015 | 0.001 | - |
 
-Decision Tree edges out Random Forest on weighted and macro F1 point estimates here, but with
-roughly 8x the fold-to-fold variance - an unstable, fold-dependent edge rather than a reliable
-one. Random Forest is carried forward for its stability and because its ensemble structure is
-what makes SHAP's `TreeExplainer` straightforward to apply cleanly.
+Time split: train before 2016-07-01, validate until 2017-01-01, test on 2017-18. The test base rate is 0.0049, which is what a random ranker scores as PR-AUC. On validation the final model reaches PR-AUC 0.325.
 
-**Final model** - SMOTE + Random Forest, evaluated on the held-out test set:
+Leave one family out (recall on the held-out family, threshold re-fixed at 0.1% FPR):
 
-| Metric | Score |
-|---|---|
-| Accuracy | 98.65% |
-| Weighted F1 | 0.9803 |
-| Macro F1 | 0.1150 |
+| Held-out family | Addresses | Recall | Test white FPR |
+| --- | --- | --- | --- |
+| princetonCerber | 9,177 | 0.002 | 0.06% |
+| princetonLocky | 6,584 | 0.000 | 0.05% |
+| paduaCryptoWall | 1,894 | 0.000 | 0.08% |
+| montrealCryptoLocker | 1,509 | 0.000 | 0.00% |
+| montrealCryptXXX | 1,354 | 0.001 | 0.05% |
 
-(Cross-validation on the training set gave a consistent 0.1246 ± 0.0145 macro F1, so this isn't a
-single lucky or unlucky draw.)
+Ransomwhere outside test (addresses not in BitcoinHeist, portable features only):
 
-The Random Forest's trees are capped (`max_depth=20`, `min_samples_leaf=25`) so that SHAP's
-`TreeExplainer` can run without exhausting memory. That constraint has a real, measurable cost:
-several ransomware families with thousands of test samples and high precision (e.g.
-`montrealCryptoLocker`, `paduaCryptoWall`, `princetonLocky`) collapse to near-zero recall - the
-model is usually right when it does flag them, but a shallower forest can route far fewer test
-cases to them in the first place. SMOTE helps the model learn these classes exist; it can't fully
-offset the depth constraint. This is reported honestly as a trade-off between interpretability
-and raw recall on rare classes, not as a claim that the imbalance correction "didn't work."
+| Slice | Addresses | Address recall |
+| --- | --- | --- |
+| all addresses | 1,084 | 0.031 |
+| families also in BitcoinHeist | 75 | 0.453 |
+| families new to BitcoinHeist | 288 | 0.000 |
+| of which NotNevada | 3 | 0.000 |
+| new families without NotNevada | 285 | 0.000 |
+| Unlabeled | 721 | 0.000 |
+| payments after 2018 | 962 | 0.000 |
+<!-- results:end -->
 
-**SHAP interpretation:** `year` is the single dominant feature for both the benign (`white`) and
-the largest ransomware family (`paduaCryptoWall`) classes, by a wide margin over every other
-feature. That's a genuinely useful but slightly uncomfortable finding: `count` and `neighbors` -
-the features that, per the payment-consolidation intuition, should be the clearest ransomware
-signal - rank behind purely temporal features for `paduaCryptoWall`. The likely explanation is
-that this was a real campaign active within a narrow window of the 2011–2018 dataset, so the
-model may be partly keying on *when* an address was active rather than a transaction-shape
-fingerprint that would generalize beyond this dataset - see the notebook's Discussion section for
-the full discussion of this and other limitations.
+Full reports: [data audit](reports/data_audit.md), [baselines](reports/baselines.md),
+[feature ablation](reports/feature_ablation.md), [final model](reports/final_model.md),
+[generalization](reports/generalization.md), [explanation](reports/explanation.md).
 
----
+## What I changed and why
 
-## Project Structure
+- **Split by time, and by address.** I train on everything before 2016-07-01, validate on July to
+  December 2016 and test on 2017-18. An address that appears in more than one period stays only in
+  the earliest one. A random split shares about 34,000 test rows with training addresses.
+- **Binary detection first.** The question is "is this a ransom payment address", scored per
+  address and day. Family attribution is a later, optional step.
+- **Metrics an analyst would use.** Recall at a 0.1% false-positive rate (about one false alarm per
+  day at 1,000 benign addresses a day), PR-AUC, and precision in the top 10 alerts per day. Accuracy
+  only shows up in the old-protocol row.
+- **No date features.** `year` and `day` carried 57% of the old model's SHAP importance. I removed
+  them and added features based on how ransom gets paid: income in dollars at that day's BTC price,
+  distance to round dollar and BTC amounts, average payment size, and rank among all addresses that
+  day.
+- **Tests it never saw.** Leave-one-family-out on BitcoinHeist, and
+  [Ransomwhere](https://zenodo.org/records/13999026) addresses that are not in BitcoinHeist, scored
+  with only the features its payment list can rebuild.
 
-```
-├── bitcoin_ransomware.ipynb    # Full analysis: EDA, preprocessing, modeling, SHAP
-├── requirements.txt
-└── .gitignore
-```
+## What the data showed
 
----
+- `count` is a merge measure (how many earlier transactions feed into the address that day), not a
+  transaction count. `neighbors` is the number of transactions that pay into the address. The old
+  README had both wrong; [data/README.md](data/README.md) has the corrected definitions.
+- 2018 has 3 ransomware rows, so the test period is in practice 2017, and 93% of that is Cerber.
+- Most 2017 ransomware is paid in round BTC amounts, but so are about 14% of benign rows, which is far
+  too many for a 0.1% false-positive budget.
 
-## Reproducing This Analysis
+## Run it
+
+Needs Python 3.12+ and about 5 GB of free RAM. Everything runs on CPU.
 
 ```bash
-# 1. Clone the repo
 git clone https://github.com/theavinash02/bitcoin-ransomware-detection.git
 cd bitcoin-ransomware-detection
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Download the dataset
-# Get BitcoinHeistData.csv from:
-# https://archive.ics.uci.edu/dataset/526/bitcoinheistransomwareaddressdataset
-# Place it in the project root folder
-
-# 4. Run the notebook end-to-end
-jupyter notebook bitcoin_ransomware.ipynb
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -e ".[dev,app]"
+ransomdet all                    # or: make all
 ```
 
----
+`ransomdet all` downloads the three data sources into `data/raw/`, then runs every stage and writes
+the reports. On my 8 GB laptop it takes about 17 minutes, with peak memory near 2.4 GB.
+`ransomdet all --dev` does the same on a 200k-row sample in a few minutes. Individual steps:
+`download`, `prepare`, `train`, `evaluate`, `features`, `final`, `generalize`, `explain`,
+`export-demo`. Settings live in [configs/default.yaml](configs/default.yaml).
 
-## Tech Stack
+```bash
+pytest -q                        # unit tests plus a 5,000-row end-to-end smoke test
+```
 
-| Layer | Technology |
-|---|---|
-| ML models | scikit-learn (Logistic Regression, Decision Tree, Random Forest) |
-| Class imbalance | imbalanced-learn (SMOTE) |
-| Interpretability | SHAP |
-| Data processing | pandas, numpy |
-| Visualisation | seaborn, matplotlib |
+## Demo
 
----
+`ransomdet export-demo` copies the model, its calibration, the threshold, per-day quantile tables and
+an enriched 5,000-row test sample into `app/artifacts/` (under 10 MB). To try it locally:
+
+```bash
+cd app && python app.py
+```
+
+![Demo](docs/demo.jpg)
+
+To publish it, create a Gradio Space on Hugging Face and push the contents of `app/` to it.
+
+![Demo: one random 2017 Cerber address scored by the app](docs/demo.jpg)
+
+## Layout
+
+```
+src/ransomdet/   data, audit, split, features, train, baselines, ablation, final_model,
+                 generalization, explain, readme, demo, cli
+configs/         every setting, seed and threshold
+reports/         stage reports, metrics JSON, figures
+app/             Gradio demo for a Hugging Face Space
+tests/           unit tests, smoke test, fixtures
+scripts/         rebuild the test fixture and the report notebook
+notebooks/       report.ipynb walkthrough; archive/ holds the original FYP notebook
+docs/            SPEC.md, MODEL_CARD.md
+```
 
 ## Limitations
 
-- This is a research/learning project on a public benchmark dataset covering 2011–2018 Bitcoin
-  activity - not a live monitoring feed. Nothing here claims real-time ransomware detection or
-  production readiness.
-- Grouping 11 ultra-rare families into a single `rare_family` bucket is a real loss of
-  resolution - those families remain indistinguishable from each other in this analysis.
-- SMOTE interpolates within existing minority-class structure; it cannot manufacture genuinely
-  new information about families that had only a handful of real addresses to begin with.
-- SHAP explains association and feature attribution learned by this specific model - it is not a
-  causal account of *why* ransomware addresses behave the way they do.
+- BitcoinHeist keeps at most 1,000 benign addresses per day out of hundreds of thousands, so
+  precision here says nothing about real-world alert rates.
+- `white` means "not on the three ransomware lists", not "checked and benign".
+- The demo scores BitcoinHeist fields for 2011-2018 dates. It cannot look up a live address.
+- Ransomwhere features are rebuilt from attributed payments and only approximate BitcoinHeist's
+  definitions.
+- Probabilities are calibrated on late 2016, when ransomware was 3.7% of rows. On 2017-18 (0.5%) they
+  run high.
 
----
+More in [docs/MODEL_CARD.md](docs/MODEL_CARD.md).
 
-## Dataset Credit
+## Data credits
 
-> Farrukhjon Masudov, Taha Belkhouja, Yan Shi, Janardhan Rao Doppa, Haifeng Chen, Srikanth V. Krishnamurthy.
-> *BitcoinHeist: Topological Data Analysis for Ransomware Detection on the Bitcoin Blockchain.*
-> IJCAI 2020. [UCI Repository](https://archive.ics.uci.edu/dataset/526/bitcoinheistransomwareaddressdataset) - CC BY 4.0.
-
----
+- BitcoinHeist: C. G. Akcora, Y. Li, Y. R. Gel, M. Kantarcioglu. *BitcoinHeist: Topological Data
+  Analysis for Ransomware Prediction on the Bitcoin Blockchain.* IJCAI 2020.
+  [UCI #526](https://archive.ics.uci.edu/dataset/526/bitcoinheistransomwareaddressdataset), CC BY 4.0.
+- Ransomwhere: J. Cable, I. Gregory, L. Izhikevich, Z. Durumeric.
+  [Zenodo v1.1.0](https://zenodo.org/records/13999026), CC BY 4.0.
+- BTC/USD daily prices: [Coin Metrics community data](https://docs.coinmetrics.io/packages/coin-metrics-community-data),
+  CC BY-NC 4.0.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT, see [LICENSE](LICENSE).
