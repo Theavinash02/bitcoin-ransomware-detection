@@ -1,0 +1,286 @@
+{
+  "dev": false,
+  "ransomwhere_meta": {
+    "record_id": 13999026,
+    "concept_record_id": "6512122",
+    "version": "1.1.0",
+    "publication_date": "2024-10-27",
+    "license": "cc-by-4.0",
+    "doi": "10.5281/zenodo.13999026",
+    "file": "ransomwhere.json",
+    "checksum": "md5:8a7bff74ab0dea4186232bc131c5d40f"
+  },
+  "sizes": {
+    "rows": 2916697,
+    "csv_mb": 225.0,
+    "parquet_mb": 212.6,
+    "dev_parquet_mb": 6.4,
+    "loaded_mb": 227.7,
+    "ransomwhere_json_mb": 5.3,
+    "price_csv_mb": 0.3,
+    "income_min_satoshi": 30000000,
+    "rows_below_0_3_btc": 0
+  },
+  "addresses": {
+    "unique_addresses": 2631095,
+    "rows": 2916697,
+    "max_rows_per_address": 420,
+    "addresses_multi_year": 27661,
+    "ransom_addresses_multi_year": 225,
+    "addresses_multi_label": 0,
+    "ransom_addresses": 20849
+  },
+  "years": {
+    "by_year": [
+      {
+        "year": 2011,
+        "white rows": 355284,
+        "ransom rows": 65,
+        "ransom addresses": 8,
+        "ransom families": 1,
+        "days": 365,
+        "days with ransom": 50,
+        "white per day": 973.4,
+        "ransom per day": 0.18
+      },
+      {
+        "year": 2012,
+        "white rows": 365000,
+        "ransom rows": 714,
+        "ransom addresses": 31,
+        "ransom families": 1,
+        "days": 365,
+        "days with ransom": 322,
+        "white per day": 1000.0,
+        "ransom per day": 1.96
+      },
+      {
+        "year": 2013,
+        "white rows": 365000,
+        "ransom rows": 7494,
+        "ransom addresses": 1454,
+        "ransom families": 3,
+        "days": 365,
+        "days with ransom": 363,
+        "white per day": 1000.0,
+        "ransom per day": 20.53
+      },
+      {
+        "year": 2014,
+        "white rows": 365000,
+        "ransom rows": 10319,
+        "ransom addresses": 1691,
+        "ransom families": 5,
+        "days": 365,
+        "days with ransom": 322,
+        "white per day": 1000.0,
+        "ransom per day": 28.27
+      },
+      {
+        "year": 2015,
+        "white rows": 365000,
+        "ransom rows": 3701,
+        "ransom addresses": 503,
+        "ransom families": 7,
+        "days": 365,
+        "days with ransom": 341,
+        "white per day": 1000.0,
+        "ransom per day": 10.14
+      },
+      {
+        "year": 2016,
+        "white rows": 365000,
+        "ransom rows": 15631,
+        "ransom addresses": 14089,
+        "ransom families": 22,
+        "days": 365,
+        "days with ransom": 348,
+        "white per day": 1000.0,
+        "ransom per day": 42.82
+      },
+      {
+        "year": 2017,
+        "white rows": 365000,
+        "ransom rows": 3486,
+        "ransom addresses": 3329,
+        "ransom families": 14,
+        "days": 365,
+        "days with ransom": 240,
+        "white per day": 1000.0,
+        "ransom per day": 9.55
+      },
+      {
+        "year": 2018,
+        "white rows": 330000,
+        "ransom rows": 3,
+        "ransom addresses": 3,
+        "ransom families": 2,
+        "days": 330,
+        "days with ransom": 3,
+        "white per day": 1000.0,
+        "ransom per day": 0.01
+      }
+    ],
+    "split_candidates": [
+      {
+        "candidate": "A: train 2011-15, val 2016, test 2017-18",
+        "split": "train",
+        "rows": 1837577,
+        "ransom rows": 22293,
+        "ransom addresses": 3465,
+        "families": 7,
+        "ransom rows from families absent in train": 0
+      },
+      {
+        "candidate": "A: train 2011-15, val 2016, test 2017-18",
+        "split": "val",
+        "rows": 372784,
+        "ransom rows": 15478,
+        "ransom addresses": 14062,
+        "families": 20,
+        "ransom rows from families absent in train": 15374
+      },
+      {
+        "candidate": "A: train 2011-15, val 2016, test 2017-18",
+        "split": "test",
+        "rows": 691733,
+        "ransom rows": 3424,
+        "ransom addresses": 3322,
+        "families": 12,
+        "ransom rows from families absent in train": 3424
+      },
+      {
+        "candidate": "B: train 2011-14, val 2015, test 2016-18",
+        "split": "train",
+        "rows": 1468876,
+        "ransom rows": 18592,
+        "ransom addresses": 2976,
+        "families": 6,
+        "ransom rows from families absent in train": 0
+      },
+      {
+        "candidate": "B: train 2011-14, val 2015, test 2016-18",
+        "split": "val",
+        "rows": 360648,
+        "ransom rows": 3471,
+        "ransom addresses": 489,
+        "families": 4,
+        "ransom rows from families absent in train": 73
+      },
+      {
+        "candidate": "B: train 2011-14, val 2015, test 2016-18",
+        "split": "test",
+        "rows": 1068307,
+        "ransom rows": 18955,
+        "ransom addresses": 17384,
+        "families": 24,
+        "ransom rows from families absent in train": 18953
+      },
+      {
+        "candidate": "C: train to Jun 2016, val Jul-Dec 2016, test 2017-18",
+        "split": "train",
+        "rows": 2028343,
+        "ransom rows": 31059,
+        "ransom addresses": 11137,
+        "families": 16,
+        "ransom rows from families absent in train": 0
+      },
+      {
+        "candidate": "C: train to Jun 2016, val Jul-Dec 2016, test 2017-18",
+        "split": "val",
+        "rows": 184453,
+        "ransom rows": 6786,
+        "ransom addresses": 6390,
+        "families": 14,
+        "ransom rows from families absent in train": 258
+      },
+      {
+        "candidate": "C: train to Jun 2016, val Jul-Dec 2016, test 2017-18",
+        "split": "test",
+        "rows": 691733,
+        "ransom rows": 3424,
+        "ransom addresses": 3322,
+        "families": 12,
+        "ransom rows from families absent in train": 181
+      }
+    ],
+    "split_dropped": {
+      "A: train 2011-15, val 2016, test 2017-18": {
+        "rows_dropped_for_overlap": 14603
+      },
+      "B: train 2011-14, val 2015, test 2016-18": {
+        "rows_dropped_for_overlap": 18866
+      },
+      "C: train to Jun 2016, val Jul-Dec 2016, test 2017-18": {
+        "rows_dropped_for_overlap": 12168
+      }
+    },
+    "by_period": {
+      "validation (Jul-Dec 2016)": {
+        "period": "validation (Jul-Dec 2016)",
+        "days": 183,
+        "rows per day": 1037.5,
+        "ransom per day, mean": 37.51,
+        "median": 36.0,
+        "days with none": 0,
+        "ceiling K=5": 1.0,
+        "ceiling K=10": 0.984,
+        "ceiling K=20": 0.914,
+        "ceiling K=50": 0.672
+      },
+      "test (2017-18)": {
+        "period": "test (2017-18)",
+        "days": 695,
+        "rows per day": 1005.0,
+        "ransom per day, mean": 5.02,
+        "median": 0.0,
+        "days with none": 452,
+        "ceiling K=5": 0.315,
+        "ceiling K=10": 0.272,
+        "ceiling K=20": 0.203,
+        "ceiling K=50": 0.1
+      }
+    }
+  },
+  "ransomwhere": {
+    "addresses": 11178,
+    "addresses_with_no_tx": 2938,
+    "transactions": 21790,
+    "btc_transactions": 21790,
+    "families": 136,
+    "first_tx": "2012-03-09",
+    "last_tx": "2024-08-19",
+    "tx_missing_amount": 0,
+    "tx_missing_time": 0,
+    "tx_nonpositive_amount": 0,
+    "btc_tx_below_0_3_btc": 11334,
+    "duplicate_tx_rows": 2541
+  },
+  "overlap": {
+    "btc_addresses": 11178,
+    "in_bitcoinheist": 6617,
+    "in_bitcoinheist_as_white": 4,
+    "families_shared": 26,
+    "families_new": 110,
+    "addresses_new_family_after_overlap": 4007,
+    "addresses_shared_family_after_overlap": 554,
+    "addresses_with_post2018_payments": 1038
+  },
+  "prices": {
+    "price_first": "2010-07-18",
+    "price_last": "2026-11-08",
+    "price_days": 5958,
+    "price_nulls": 0,
+    "bh_dates": 2885,
+    "bh_dates_missing_price": 0,
+    "rw_dates": 2277,
+    "rw_dates_missing_price": 0,
+    "rw_missing_examples": [],
+    "bh_missing_examples": [],
+    "gaps_inside_series": 0
+  },
+  "run": {
+    "runtime_s": 76.8,
+    "peak_rss_mb": 2460.0
+  }
+}
