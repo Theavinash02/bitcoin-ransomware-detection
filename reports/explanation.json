@@ -1,0 +1,151 @@
+{
+  "dev": false,
+  "importance": {
+    "avg_payment_btc": 0.6966140111567125,
+    "income_usd": 0.6541981798300257,
+    "round_btc_0.1": 0.49628829023216403,
+    "pct_neighbors": 0.20633351734023023,
+    "weight": 0.19603578820526385,
+    "looped": 0.1913429738945274,
+    "log_income_usd": 0.17951860263565467,
+    "pct_count": 0.12687476145541207,
+    "income": 0.1239297054096051,
+    "round_min": 0.11549345011543319,
+    "pct_length": 0.10811084151839036,
+    "count_per_neighbor": 0.10795188377275224,
+    "length": 0.09556569613114009,
+    "count": 0.08963151152604552,
+    "pct_income_usd": 0.07384334963201093,
+    "round_usd_500": 0.0729012762879129,
+    "round_btc_0.5": 0.06636721666220034,
+    "round_btc_1": 0.03190705141394899,
+    "neighbors": 0.01983676263495394,
+    "round_usd_50": 0.01222028168748493,
+    "round_usd_100": 0.011960693089893957
+  },
+  "baseline_a_importance": {
+    "year": 1.5875139153231708,
+    "income": 0.7545305615575093,
+    "day": 0.6990338898772201,
+    "looped": 0.21816598095385825,
+    "neighbors": 0.21696993654424915,
+    "length": 0.21605134290251782,
+    "weight": 0.21037789640060028,
+    "count": 0.11257761393486976
+  },
+  "baseline_a_date_share": 0.5694699561746891,
+  "findings": [
+    "The three largest drivers are `avg_payment_btc`, `income_usd`, `round_btc_0.1`; together they carry 50% of the mean absolute SHAP value.",
+    "`year` and `day` carry 57% of Baseline A's mean absolute SHAP value. The final model has no date inputs; date enters only through the dollar price lookup and the same-day percentiles.",
+    "Only 3 of 3,322 test ransomware addresses (0.1%) have a day above the threshold. princetonCerber accounts for 3,171 of the missed addresses.",
+    "Caught addresses have median income $1,263 against $962 for missed ones and $6,570 for white rows.",
+    "Most test ransomware is paid in round BTC: 71% of missed rows sit within 1% of a 0.1 BTC multiple, against 14% of white rows. That rule alone, checked after the fact on test, finds 71% of test ransomware rows at 2.5% precision (base rate 0.5%). The model does not rank these rows high enough to pass a 0.1% FPR threshold, because round amounts are common enough among white rows that the signal alone is far from that strict."
+  ],
+  "medians": {
+    "caught": {
+      "income_usd": 1262.8411865234375,
+      "income_btc": 1.2000000476837158,
+      "round_min": 2.220446049250313e-15,
+      "round_usd_100": 0.18120557069778442,
+      "round_btc_0.1": 2.220446049250313e-15,
+      "neighbors": 2.0,
+      "count": 1.0,
+      "length": 0.0,
+      "weight": 0.5,
+      "pct_income_usd": 0.49648237228393555
+    },
+    "missed": {
+      "income_usd": 961.7051391601562,
+      "income_btc": 0.800000011920929,
+      "round_min": 0.0,
+      "round_usd_100": 0.24058839678764343,
+      "round_btc_0.1": 0.0,
+      "neighbors": 2.0,
+      "count": 1.0,
+      "length": 8.0,
+      "weight": 0.125,
+      "pct_income_usd": 0.3355378806591034
+    },
+    "white (test)": {
+      "income_usd": 6569.9814453125,
+      "income_btc": 1.1703532934188843,
+      "round_min": 0.0509520024061203,
+      "round_usd_100": 0.2481471449136734,
+      "round_btc_0.1": 0.2071060985326767,
+      "neighbors": 2.0,
+      "count": 1.0,
+      "length": 10.0,
+      "weight": 0.5,
+      "pct_income_usd": 0.5002663135528564
+    }
+  },
+  "misses": {
+    "addresses": 3322,
+    "caught_addresses": 3,
+    "by_family": {
+      "montrealCryptConsole": {
+        "caught": 0,
+        "missed": 5
+      },
+      "montrealDMALockerv3": {
+        "caught": 0,
+        "missed": 70
+      },
+      "montrealEDA2": {
+        "caught": 0,
+        "missed": 3
+      },
+      "montrealFlyper": {
+        "caught": 0,
+        "missed": 1
+      },
+      "montrealGlobe": {
+        "caught": 0,
+        "missed": 1
+      },
+      "montrealGlobev3": {
+        "caught": 0,
+        "missed": 3
+      },
+      "montrealSamSam": {
+        "caught": 0,
+        "missed": 16
+      },
+      "montrealWannaCry": {
+        "caught": 0,
+        "missed": 5
+      },
+      "montrealXLocker": {
+        "caught": 0,
+        "missed": 1
+      },
+      "montrealXLockerv5.0": {
+        "caught": 0,
+        "missed": 3
+      },
+      "princetonCerber": {
+        "caught": 3,
+        "missed": 3171
+      },
+      "princetonLocky": {
+        "caught": 0,
+        "missed": 40
+      }
+    },
+    "round_btc_share": {
+      "caught": 0.6666666666666666,
+      "missed": 0.7117801812335575
+    },
+    "round_btc_share_white": 0.13876035327156844,
+    "round_rule": {
+      "recall": 0.7117406542056075,
+      "precision": 0.02488080288319193,
+      "base_rate": 0.004949886733754209
+    }
+  },
+  "sample_rows": 5000,
+  "run": {
+    "runtime_s": 25.9,
+    "peak_rss_mb": 2252.0
+  }
+}

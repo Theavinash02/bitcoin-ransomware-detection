@@ -1,0 +1,221 @@
+{
+  "dev": false,
+  "lofo": [
+    {
+      "family": "princetonCerber",
+      "addresses": 9177,
+      "rows": 9223,
+      "years": "2016-2017",
+      "held_out_recall": 0.0016263688604575518,
+      "held_out_address_recall": 0.0016345210853220007,
+      "in_training_test_recall": 0.0009433962264150943,
+      "in_training_test_rows": 3180,
+      "test_white_fpr": 0.0005520776279258298
+    },
+    {
+      "family": "princetonLocky",
+      "addresses": 6584,
+      "rows": 6625,
+      "years": "2016-2017",
+      "held_out_recall": 0.0003018867924528302,
+      "held_out_address_recall": 0.00030376670716889426,
+      "in_training_test_recall": 0.0,
+      "in_training_test_rows": 40,
+      "test_white_fpr": 0.0005477191203369417
+    },
+    {
+      "family": "paduaCryptoWall",
+      "addresses": 1894,
+      "rows": 12390,
+      "years": "2014-2015",
+      "held_out_recall": 0.00048426150121065375,
+      "held_out_address_recall": 0.0031678986272439284,
+      "in_training_test_recall": null,
+      "in_training_test_rows": 0,
+      "test_white_fpr": 0.0007976068887665278
+    },
+    {
+      "family": "montrealCryptoLocker",
+      "addresses": 1509,
+      "rows": 9315,
+      "years": "2011-2015",
+      "held_out_recall": 0.00032206119162640903,
+      "held_out_address_recall": 0.0013253810470510272,
+      "in_training_test_recall": null,
+      "in_training_test_rows": 0,
+      "test_white_fpr": 7.2641793148135506e-06
+    },
+    {
+      "family": "montrealCryptXXX",
+      "addresses": 1354,
+      "rows": 2419,
+      "years": "2016-2016",
+      "held_out_recall": 0.0012401818933443572,
+      "held_out_address_recall": 0.0022156573116691287,
+      "in_training_test_recall": null,
+      "in_training_test_rows": 0,
+      "test_white_fpr": 0.0005055868803110231
+    }
+  ],
+  "ransomwhere": {
+    "features": [
+      "income",
+      "neighbors",
+      "log_income_btc",
+      "log_neighbors",
+      "avg_payment_btc",
+      "income_usd",
+      "log_income_usd",
+      "round_usd_50",
+      "round_usd_100",
+      "round_usd_500",
+      "round_btc_0.1",
+      "round_btc_0.5",
+      "round_btc_1",
+      "round_min"
+    ],
+    "threshold": 0.7773329619362744,
+    "bh_test": {
+      "rows": 691733,
+      "positives": 3424,
+      "pr_auc": 0.018592764807308867,
+      "recall_at_fpr": 0.0008761682242990654,
+      "fpr_at_threshold": 0.0005724173300073078,
+      "flagged": 397,
+      "threshold": 0.7773329619362744,
+      "precision_at_k": 0.011942446043165468,
+      "precision_at_k_ceiling": 0.2703597122302158,
+      "brier": 0.13136317694577107,
+      "base_rate": 0.004949886733754209
+    },
+    "bh_test_white_address_fpr": 0.0005902887021139527,
+    "slices": [
+      {
+        "slice": "all addresses",
+        "addresses": 1084,
+        "address_days": 1512,
+        "families": 42,
+        "address_recall": 0.03136531365313653,
+        "address_day_recall": 0.022486772486772486
+      },
+      {
+        "slice": "families also in BitcoinHeist",
+        "addresses": 75,
+        "address_days": 82,
+        "families": 3,
+        "address_recall": 0.4533333333333333,
+        "address_day_recall": 0.4146341463414634
+      },
+      {
+        "slice": "families new to BitcoinHeist",
+        "addresses": 288,
+        "address_days": 697,
+        "families": 38,
+        "address_recall": 0.0,
+        "address_day_recall": 0.0
+      },
+      {
+        "slice": "  of which NotNevada",
+        "addresses": 3,
+        "address_days": 3,
+        "families": 1,
+        "address_recall": 0.0,
+        "address_day_recall": 0.0
+      },
+      {
+        "slice": "  new families without NotNevada",
+        "addresses": 285,
+        "address_days": 694,
+        "families": 37,
+        "address_recall": 0.0,
+        "address_day_recall": 0.0
+      },
+      {
+        "slice": "Unlabeled",
+        "addresses": 721,
+        "address_days": 733,
+        "families": 1,
+        "address_recall": 0.0,
+        "address_day_recall": 0.0
+      },
+      {
+        "slice": "payments after 2018",
+        "addresses": 962,
+        "address_days": 1351,
+        "families": 32,
+        "address_recall": 0.0,
+        "address_day_recall": 0.0
+      }
+    ],
+    "top_families": [
+      {
+        "family": "Conti",
+        "addresses": 98,
+        "address_recall": 0.0
+      },
+      {
+        "family": "Locky",
+        "addresses": 70,
+        "address_recall": 0.4857142857142857
+      },
+      {
+        "family": "Netwalker (Mailto)",
+        "addresses": 48,
+        "address_recall": 0.0
+      },
+      {
+        "family": "Ryuk",
+        "addresses": 22,
+        "address_recall": 0.0
+      },
+      {
+        "family": "MedusaLocker",
+        "addresses": 20,
+        "address_recall": 0.0
+      },
+      {
+        "family": "Karakurt",
+        "addresses": 19,
+        "address_recall": 0.0
+      },
+      {
+        "family": "Cuba",
+        "addresses": 17,
+        "address_recall": 0.0
+      },
+      {
+        "family": "Egregor",
+        "addresses": 9,
+        "address_recall": 0.0
+      },
+      {
+        "family": "Akira",
+        "addresses": 7,
+        "address_recall": 0.0
+      },
+      {
+        "family": "REvil / Sodinokibi",
+        "addresses": 6,
+        "address_recall": 0.0
+      },
+      {
+        "family": "RagnarLocker",
+        "addresses": 4,
+        "address_recall": 0.0
+      },
+      {
+        "family": "Maui",
+        "addresses": 4,
+        "address_recall": 0.0
+      }
+    ],
+    "date_range": [
+      "2016-01-12",
+      "2024-08-19"
+    ]
+  },
+  "run": {
+    "runtime_s": 225.9,
+    "peak_rss_mb": 2299.0
+  }
+}

@@ -1,0 +1,517 @@
+{
+  "dev": false,
+  "features": [
+    "length",
+    "weight",
+    "count",
+    "looped",
+    "neighbors",
+    "income",
+    "avg_payment_btc",
+    "count_per_neighbor",
+    "income_usd",
+    "log_income_usd",
+    "round_usd_50",
+    "round_usd_100",
+    "round_usd_500",
+    "round_btc_0.1",
+    "round_btc_0.5",
+    "round_btc_1",
+    "round_min",
+    "pct_income_usd",
+    "pct_count",
+    "pct_neighbors",
+    "pct_length"
+  ],
+  "best_params": {
+    "num_leaves": 255,
+    "learning_rate": 0.1,
+    "min_child_samples": 50,
+    "feature_fraction": 1.0,
+    "pos_weight_scale": 0.5
+  },
+  "trees": 46,
+  "trials": [
+    {
+      "num_leaves": 15,
+      "learning_rate": 0.1,
+      "min_child_samples": 200,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 0.5,
+      "trees": 39,
+      "val_pr_auc": 0.28272540952864955
+    },
+    {
+      "num_leaves": 255,
+      "learning_rate": 0.02,
+      "min_child_samples": 200,
+      "feature_fraction": 0.6,
+      "pos_weight_scale": 0.25,
+      "trees": 4,
+      "val_pr_auc": 0.30063528941025214
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.1,
+      "min_child_samples": 200,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 1.0,
+      "trees": 73,
+      "val_pr_auc": 0.2965353414743801
+    },
+    {
+      "num_leaves": 127,
+      "learning_rate": 0.05,
+      "min_child_samples": 20,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 0.5,
+      "trees": 145,
+      "val_pr_auc": 0.3069405445280466
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.05,
+      "min_child_samples": 20,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 2.0,
+      "trees": 142,
+      "val_pr_auc": 0.30419989559248894
+    },
+    {
+      "num_leaves": 127,
+      "learning_rate": 0.05,
+      "min_child_samples": 500,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 0.5,
+      "trees": 92,
+      "val_pr_auc": 0.289614277810201
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.02,
+      "min_child_samples": 20,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 2.0,
+      "trees": 429,
+      "val_pr_auc": 0.2979323293266852
+    },
+    {
+      "num_leaves": 15,
+      "learning_rate": 0.1,
+      "min_child_samples": 500,
+      "feature_fraction": 0.6,
+      "pos_weight_scale": 1.0,
+      "trees": 40,
+      "val_pr_auc": 0.2702423861382899
+    },
+    {
+      "num_leaves": 15,
+      "learning_rate": 0.1,
+      "min_child_samples": 200,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 0.25,
+      "trees": 58,
+      "val_pr_auc": 0.28825541982978975
+    },
+    {
+      "num_leaves": 255,
+      "learning_rate": 0.05,
+      "min_child_samples": 500,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 2.0,
+      "trees": 159,
+      "val_pr_auc": 0.31216364706222355
+    },
+    {
+      "num_leaves": 127,
+      "learning_rate": 0.02,
+      "min_child_samples": 50,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 0.5,
+      "trees": 259,
+      "val_pr_auc": 0.3081410741835369
+    },
+    {
+      "num_leaves": 15,
+      "learning_rate": 0.05,
+      "min_child_samples": 20,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 1.0,
+      "trees": 128,
+      "val_pr_auc": 0.29577654111900814
+    },
+    {
+      "num_leaves": 255,
+      "learning_rate": 0.1,
+      "min_child_samples": 50,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 0.5,
+      "trees": 46,
+      "val_pr_auc": 0.3249152593330534
+    },
+    {
+      "num_leaves": 31,
+      "learning_rate": 0.1,
+      "min_child_samples": 50,
+      "feature_fraction": 0.6,
+      "pos_weight_scale": 0.5,
+      "trees": 224,
+      "val_pr_auc": 0.2925025007574448
+    },
+    {
+      "num_leaves": 127,
+      "learning_rate": 0.02,
+      "min_child_samples": 100,
+      "feature_fraction": 0.6,
+      "pos_weight_scale": 1.0,
+      "trees": 13,
+      "val_pr_auc": 0.2939891812616063
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.02,
+      "min_child_samples": 50,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 1.0,
+      "trees": 100,
+      "val_pr_auc": 0.29715662821716793
+    },
+    {
+      "num_leaves": 255,
+      "learning_rate": 0.05,
+      "min_child_samples": 20,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 1.0,
+      "trees": 331,
+      "val_pr_auc": 0.31159128443301204
+    },
+    {
+      "num_leaves": 127,
+      "learning_rate": 0.02,
+      "min_child_samples": 50,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 2.0,
+      "trees": 326,
+      "val_pr_auc": 0.30198873361893785
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.1,
+      "min_child_samples": 500,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 2.0,
+      "trees": 60,
+      "val_pr_auc": 0.30228649433803506
+    },
+    {
+      "num_leaves": 31,
+      "learning_rate": 0.02,
+      "min_child_samples": 200,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 0.25,
+      "trees": 23,
+      "val_pr_auc": 0.30165023686779474
+    },
+    {
+      "num_leaves": 255,
+      "learning_rate": 0.02,
+      "min_child_samples": 500,
+      "feature_fraction": 0.6,
+      "pos_weight_scale": 2.0,
+      "trees": 148,
+      "val_pr_auc": 0.3114759391888574
+    },
+    {
+      "num_leaves": 127,
+      "learning_rate": 0.1,
+      "min_child_samples": 200,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 1.0,
+      "trees": 62,
+      "val_pr_auc": 0.3033823110003109
+    },
+    {
+      "num_leaves": 31,
+      "learning_rate": 0.1,
+      "min_child_samples": 100,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 1.0,
+      "trees": 95,
+      "val_pr_auc": 0.29484642401872496
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.02,
+      "min_child_samples": 20,
+      "feature_fraction": 0.6,
+      "pos_weight_scale": 0.25,
+      "trees": 20,
+      "val_pr_auc": 0.3045952121120603
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.1,
+      "min_child_samples": 200,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 2.0,
+      "trees": 96,
+      "val_pr_auc": 0.29908693603653913
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.02,
+      "min_child_samples": 200,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 1.0,
+      "trees": 347,
+      "val_pr_auc": 0.29843581940477093
+    },
+    {
+      "num_leaves": 63,
+      "learning_rate": 0.05,
+      "min_child_samples": 20,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 2.0,
+      "trees": 175,
+      "val_pr_auc": 0.3084798998711293
+    },
+    {
+      "num_leaves": 31,
+      "learning_rate": 0.05,
+      "min_child_samples": 20,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 0.5,
+      "trees": 168,
+      "val_pr_auc": 0.29454140812212815
+    },
+    {
+      "num_leaves": 255,
+      "learning_rate": 0.02,
+      "min_child_samples": 50,
+      "feature_fraction": 0.8,
+      "pos_weight_scale": 2.0,
+      "trees": 352,
+      "val_pr_auc": 0.3131947696996083
+    },
+    {
+      "num_leaves": 255,
+      "learning_rate": 0.02,
+      "min_child_samples": 50,
+      "feature_fraction": 1.0,
+      "pos_weight_scale": 0.25,
+      "trees": 414,
+      "val_pr_auc": 0.3215379370550438
+    }
+  ],
+  "calibration": {
+    "method": "sigmoid",
+    "oof_brier": {
+      "isotonic": 0.029576888847202488,
+      "sigmoid": 0.029431616883939082
+    }
+  },
+  "threshold": {
+    "raw_threshold": 0.9437166394685528,
+    "calibrated_at_threshold": 0.5940223744022991,
+    "target_fpr": 0.001,
+    "top_k_per_day": 10,
+    "calibration": {
+      "method": "sigmoid",
+      "oof_brier": {
+        "isotonic": 0.029576888847202488,
+        "sigmoid": 0.029431616883939082
+      }
+    }
+  },
+  "val": {
+    "rows": 184453,
+    "positives": 6786,
+    "pr_auc": 0.3249152593330534,
+    "recall_at_fpr": 0.05614500442086649,
+    "fpr_at_threshold": 0.0009962457856551863,
+    "flagged": 558,
+    "threshold": 0.9437166394685528,
+    "precision_at_k": 0.4278688524590164,
+    "precision_at_k_ceiling": 0.9830601092896175,
+    "brier": 0.029233521052499215,
+    "base_rate": 0.036789859747469546,
+    "brier_base_rate": 0.03543636596723107
+  },
+  "test": {
+    "rows": 691733,
+    "positives": 3424,
+    "pr_auc": 0.015321356922566785,
+    "recall_at_fpr": 0.0008761682242990654,
+    "fpr_at_threshold": 0.00040824687749252154,
+    "flagged": 284,
+    "threshold": 0.9437166394685528,
+    "precision_at_k": 0.00920863309352518,
+    "precision_at_k_ceiling": 0.2703597122302158,
+    "brier": 0.0068896396603466276,
+    "base_rate": 0.004949886733754209,
+    "brier_base_rate": 0.004925385355077214,
+    "by_year": {
+      "2017": {
+        "recall": 0.0008764241893076249,
+        "fpr": 0.0004304347946826029,
+        "flagged": 158,
+        "rows": 363524,
+        "positives": 3423
+      },
+      "2018": {
+        "recall": 0.0,
+        "fpr": 0.0003839028908497051,
+        "flagged": 126,
+        "rows": 328209,
+        "positives": 1
+      }
+    },
+    "by_family": {
+      "princetonCerber": {
+        "rows": 3180,
+        "recall": 0.0009433962264150943
+      },
+      "montrealDMALockerv3": {
+        "rows": 129,
+        "recall": 0.0
+      },
+      "princetonLocky": {
+        "rows": 40,
+        "recall": 0.0
+      },
+      "montrealWannaCry": {
+        "rows": 28,
+        "recall": 0.0
+      },
+      "montrealSamSam": {
+        "rows": 20,
+        "recall": 0.0
+      },
+      "montrealXLockerv5.0": {
+        "rows": 7,
+        "recall": 0.0
+      },
+      "montrealCryptConsole": {
+        "rows": 7,
+        "recall": 0.0
+      },
+      "montrealGlobev3": {
+        "rows": 7,
+        "recall": 0.0
+      },
+      "montrealEDA2": {
+        "rows": 3,
+        "recall": 0.0
+      },
+      "montrealFlyper": {
+        "rows": 1,
+        "recall": 0.0
+      },
+      "montrealGlobe": {
+        "rows": 1,
+        "recall": 0.0
+      },
+      "montrealXLocker": {
+        "rows": 1,
+        "recall": 0.0
+      }
+    }
+  },
+  "comparison": {
+    "logistic_regression": {
+      "rows": 691733,
+      "positives": 3424,
+      "pr_auc": 0.0030860826631201586,
+      "recall_at_fpr": 0.0,
+      "fpr_at_threshold": 0.006975064978083971,
+      "flagged": 4801,
+      "threshold": 0.9931558966636658,
+      "precision_at_k": 0.0033093525179856116,
+      "precision_at_k_ceiling": 0.2703597122302158,
+      "brier": 0.8294308185577393,
+      "base_rate": 0.004949886733754209,
+      "val_pr_auc": 0.06875280233249922
+    },
+    "rf_smote": {
+      "rows": 691733,
+      "positives": 3424,
+      "pr_auc": 0.04391128832149123,
+      "recall_at_fpr": 0.0005841121495327102,
+      "fpr_at_threshold": 1.598119449258981e-05,
+      "flagged": 13,
+      "threshold": 0.9057597406176738,
+      "precision_at_k": 0.02762589928057554,
+      "precision_at_k_ceiling": 0.2703597122302158,
+      "brier": 0.0801174062912643,
+      "base_rate": 0.004949886733754209,
+      "val_pr_auc": 0.3349527965920861
+    }
+  },
+  "reliability_test": [
+    {
+      "bin": 0,
+      "predicted": 0.00041879287166457756,
+      "observed": 2.8912597218608148e-05,
+      "rows": 69174
+    },
+    {
+      "bin": 1,
+      "predicted": 0.0015454322996382725,
+      "observed": 0.00014456507596894742,
+      "rows": 69173
+    },
+    {
+      "bin": 2,
+      "predicted": 0.0033053826847501125,
+      "observed": 0.00036141268992236856,
+      "rows": 69173
+    },
+    {
+      "bin": 3,
+      "predicted": 0.005454302864884494,
+      "observed": 0.0008240209330230003,
+      "rows": 69173
+    },
+    {
+      "bin": 4,
+      "predicted": 0.008142898112759213,
+      "observed": 0.0018648625206002256,
+      "rows": 69174
+    },
+    {
+      "bin": 5,
+      "predicted": 0.012005424922209558,
+      "observed": 0.0026455408902317378,
+      "rows": 69173
+    },
+    {
+      "bin": 6,
+      "predicted": 0.017410255629500045,
+      "observed": 0.004264669741083949,
+      "rows": 69173
+    },
+    {
+      "bin": 7,
+      "predicted": 0.02499496276813852,
+      "observed": 0.007979992193485897,
+      "rows": 69173
+    },
+    {
+      "bin": 8,
+      "predicted": 0.03964338972255855,
+      "observed": 0.014962485362786057,
+      "rows": 69173
+    },
+    {
+      "bin": 9,
+      "predicted": 0.1242035882232956,
+      "observed": 0.016422355220169427,
+      "rows": 69174
+    }
+  ],
+  "model_mb": 1.2155570983886719,
+  "run": {
+    "runtime_s": 458.4,
+    "peak_rss_mb": 2394.0
+  }
+}
