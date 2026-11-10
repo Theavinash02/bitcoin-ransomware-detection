@@ -38,3 +38,5 @@ reports/*_dev.*
 reports/figures/*_dev.png
 reports/*.log
 *.egg-info/
+
+.claude/
