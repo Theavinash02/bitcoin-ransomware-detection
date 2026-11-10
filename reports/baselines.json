@@ -1,0 +1,242 @@
+{
+  "dev": false,
+  "config": {
+    "split": {
+      "val_start": "2016-07-01",
+      "test_start": "2017-01-01"
+    },
+    "metrics": {
+      "target_fpr": 0.001,
+      "top_k": 10
+    }
+  },
+  "results": {
+    "baseline_a": {
+      "val": {
+        "rows": 184453,
+        "positives": 6786,
+        "pr_auc": 0.28576148203584945,
+        "recall_at_fpr": 0.026672561155319775,
+        "fpr_at_threshold": 0.0009962457856551863,
+        "flagged": 358,
+        "threshold": 0.9622958026309282,
+        "precision_at_k": 0.38579234972677595,
+        "precision_at_k_ceiling": 0.9830601092896175,
+        "brier": 0.17586838768500884,
+        "base_rate": 0.036789859747469546
+      },
+      "test": {
+        "rows": 691733,
+        "positives": 3424,
+        "pr_auc": 0.007522624945197126,
+        "recall_at_fpr": 0.024824766355140186,
+        "fpr_at_threshold": 0.005222944927350943,
+        "flagged": 3680,
+        "threshold": 0.9622958026309282,
+        "precision_at_k": 0.004892086330935252,
+        "precision_at_k_ceiling": 0.2703597122302158,
+        "brier": 0.16901191422416253,
+        "base_rate": 0.004949886733754209,
+        "by_year": {
+          "2017": {
+            "recall": 0.02483201869704937,
+            "fpr": 0.004420981891191638,
+            "flagged": 1677,
+            "rows": 363524,
+            "positives": 3423
+          },
+          "2018": {
+            "recall": 0.0,
+            "fpr": 0.00610283722517428,
+            "flagged": 2003,
+            "rows": 328209,
+            "positives": 1
+          }
+        }
+      }
+    },
+    "baseline_b": {
+      "val": {
+        "rows": 184453,
+        "positives": 6786,
+        "pr_auc": 0.1635203548862443,
+        "recall_at_fpr": 0.03580901856763926,
+        "fpr_at_threshold": 0.0009624747420736546,
+        "flagged": 414,
+        "threshold": 0.9324172779018549,
+        "precision_at_k": 0.3109289617486339,
+        "precision_at_k_ceiling": 0.9830601092896175,
+        "brier": 0.22177841209538718,
+        "base_rate": 0.036789859747469546
+      },
+      "test": {
+        "rows": 691733,
+        "positives": 3424,
+        "pr_auc": 0.0070453481022662995,
+        "recall_at_fpr": 0.0008761682242990654,
+        "fpr_at_threshold": 0.0010489474930590766,
+        "flagged": 725,
+        "threshold": 0.9324172779018549,
+        "precision_at_k": 0.005467625899280576,
+        "precision_at_k_ceiling": 0.2703597122302158,
+        "brier": 0.21144747525271368,
+        "base_rate": 0.004949886733754209,
+        "by_year": {
+          "2017": {
+            "recall": 0.0008764241893076249,
+            "fpr": 0.0008886395761189222,
+            "flagged": 323,
+            "rows": 363524,
+            "positives": 3423
+          },
+          "2018": {
+            "recall": 0.0,
+            "fpr": 0.0012248330327109638,
+            "flagged": 402,
+            "rows": 328209,
+            "positives": 1
+          }
+        }
+      }
+    },
+    "old_protocol": {
+      "val": {
+        "rows": 291670,
+        "positives": 4141,
+        "pr_auc": 0.4040630014105642,
+        "recall_at_fpr": 0.19222410045882637,
+        "fpr_at_threshold": 0.0009981601855812805,
+        "flagged": 1083,
+        "threshold": 0.631316640857792,
+        "precision_at_k": 0.08045060658578856,
+        "precision_at_k_ceiling": 0.13317157712305025,
+        "brier": 0.016987485927938983,
+        "base_rate": 0.014197552027976823
+      },
+      "test": {
+        "rows": 583340,
+        "positives": 8283,
+        "pr_auc": 0.41167241887925926,
+        "recall_at_fpr": 0.19364964384884703,
+        "fpr_at_threshold": 0.0009303425573464892,
+        "flagged": 2139,
+        "threshold": 0.631316640857792,
+        "precision_at_k": 0.11927209705372617,
+        "precision_at_k_ceiling": 0.22675909878682843,
+        "brier": 0.016950386732135676,
+        "base_rate": 0.014199266294099497,
+        "by_year": {
+          "2011": {
+            "recall": 0.0,
+            "fpr": 0.0,
+            "flagged": 0,
+            "rows": 71253,
+            "positives": 8
+          },
+          "2012": {
+            "recall": 0.0,
+            "fpr": 0.0,
+            "flagged": 0,
+            "rows": 73097,
+            "positives": 149
+          },
+          "2013": {
+            "recall": 0.043085476025017375,
+            "fpr": 0.0005613208838750308,
+            "flagged": 103,
+            "rows": 74481,
+            "positives": 1439
+          },
+          "2014": {
+            "recall": 0.05816226783968719,
+            "fpr": 0.0013879918094740749,
+            "flagged": 220,
+            "rows": 74813,
+            "positives": 2046
+          },
+          "2015": {
+            "recall": 0.2506203473945409,
+            "fpr": 0.0013409044263528768,
+            "flagged": 300,
+            "rows": 73891,
+            "positives": 806
+          },
+          "2016": {
+            "recall": 0.3543658381134481,
+            "fpr": 0.003754778809393774,
+            "flagged": 1387,
+            "rows": 76378,
+            "positives": 3138
+          },
+          "2017": {
+            "recall": 0.15660919540229884,
+            "fpr": 0.00027481964960494675,
+            "flagged": 129,
+            "rows": 73471,
+            "positives": 696
+          },
+          "2018": {
+            "recall": 0.0,
+            "fpr": 0.0,
+            "flagged": 0,
+            "rows": 65956,
+            "positives": 1
+          }
+        },
+        "accuracy": 0.9855658792470943,
+        "f1_weighted": 0.984496160000391,
+        "f1_macro": 0.7040664392181897
+      }
+    }
+  },
+  "runs": {
+    "train_rows_after_thinning": 330390,
+    "train_ransom_rows": 31059,
+    "val_rows": 184453,
+    "test_rows": 691733,
+    "rows_dropped_for_address_overlap": 12168,
+    "models": {
+      "baseline_a": {
+        "runtime_s": 14.7,
+        "peak_rss_mb": 1687.0,
+        "best_iteration": 440,
+        "features": [
+          "year",
+          "day",
+          "length",
+          "weight",
+          "count",
+          "looped",
+          "neighbors",
+          "income"
+        ]
+      },
+      "baseline_b": {
+        "runtime_s": 4.9,
+        "peak_rss_mb": 1687.0,
+        "best_iteration": 79,
+        "features": [
+          "length",
+          "weight",
+          "count",
+          "looped",
+          "neighbors",
+          "income"
+        ]
+      }
+    },
+    "old_protocol": {
+      "runtime_s": 22.5,
+      "peak_rss_mb": 1710.0,
+      "fit_rows_after_thinning": 330516,
+      "threshold_rows": 291670,
+      "test_rows": 583340,
+      "test_addresses_also_in_fit": 34288
+    },
+    "run": {
+      "runtime_s": 47.2,
+      "peak_rss_mb": 1710.0
+    },
+    "dev": false
+  }
+}
