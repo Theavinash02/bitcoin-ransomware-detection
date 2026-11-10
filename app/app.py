@@ -208,4 +208,5 @@ with gr.Blocks(title="Bitcoin ransomware detector") as demo:
         gr.Markdown(ABOUT)
 
 if __name__ == "__main__":
-    demo.launch()
+    # Server-side rendering can leave the page unstyled inside the Spaces frame on first load.
+    demo.launch(ssr_mode=False)
