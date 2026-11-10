@@ -31,7 +31,19 @@ sample = pd.read_parquet(ART / "demo_sample.parquet")
 results = json.loads((ART / "results.json").read_text())
 FIRST_DAY, LAST_DAY = quantiles["date"].min().date(), quantiles["date"].max().date()
 
+# Free Gradio Spaces run on ZeroGPU, which requires a @spaces.GPU function. The model runs on
+# CPU either way; outside a Space the package is absent and the decorator does nothing.
+try:
+    import spaces
 
+    on_gpu = spaces.GPU(duration=10)
+except ImportError:
+
+    def on_gpu(fn):
+        return fn
+
+
+@on_gpu
 def score(row: pd.DataFrame) -> tuple[float, bool, pd.Series]:
     """Return calibrated risk, whether it is flagged, and the SHAP contributions for one row."""
     feats = features.build_features(row, prices, quantiles)
