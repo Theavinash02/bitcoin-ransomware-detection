@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ransomdet"
+version = "0.1.0"
+description = "Ranks Bitcoin addresses by ransomware risk using the BitcoinHeist dataset."
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "imbalanced-learn==0.14.2",
+    "lightgbm==4.7.0",
+    "matplotlib==3.11.2",
+    "numpy==2.5.4",
+    "pandas==3.1.1",
+    "pyarrow==26.0.1",
+    "pyyaml==6.0.3",
+    "scikit-learn==1.9.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.2.0", "ruff==0.17.4"]
+app = ["gradio==6.31.0"]
+
+[project.scripts]
+ransomdet = "ransomdet.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+extend-exclude = ["notebooks/archive"]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

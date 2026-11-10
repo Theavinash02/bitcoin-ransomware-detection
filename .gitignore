@@ -19,3 +19,22 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Data and model outputs (see data/README.md)
+data/raw/
+data/processed/
+models/
+*.parquet
+
+# Small committed fixtures for the tests
+!tests/fixtures/*.csv
+
+# Demo artifacts ship with the Space; the dev copy does not
+!app/artifacts/*.parquet
+app/artifacts_dev/
+
+# Dev-sample reports and run logs are scratch output
+reports/*_dev.*
+reports/figures/*_dev.png
+reports/*.log
+*.egg-info/
